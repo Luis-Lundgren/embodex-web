@@ -1,0 +1,1119 @@
+[
+  {
+    "id": "demo_dataset",
+    "title": "Demo: Pick and Place",
+    "description": "A high-fidelity demonstration of SO-100 picking up an object. Captured at 30Hz.",
+    "sourceType": "local",
+    "sourceId": "demo_v1",
+    "isPremium": false,
+    "createdAt": "2026-02-04T12:00:00Z",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/demo_dataset/episode_000.json",
+        "duration": 5.0,
+        "frameCount": 150
+      }
+    ]
+  },
+  {
+    "id": "lerobot_bi_so100_pickup_lego",
+    "title": "Lerobot Bi So100 Pickup Lego",
+    "description": "HuggingFace dataset from zonglin11/lerobot_bi_so100_pickup_lego",
+    "sourceType": "huggingface",
+    "sourceId": "zonglin11/lerobot_bi_so100_pickup_lego",
+    "isPremium": false,
+    "createdAt": "2026-02-04T16:01:06.302754",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_000.json",
+        "duration": 16.633,
+        "frameCount": 500
+      },
+      {
+        "id": "episode_001",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_001.json",
+        "duration": 14.667,
+        "frameCount": 441
+      },
+      {
+        "id": "episode_002",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_002.json",
+        "duration": 14.333,
+        "frameCount": 431
+      },
+      {
+        "id": "episode_003",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_003.json",
+        "duration": 16.167,
+        "frameCount": 486
+      },
+      {
+        "id": "episode_004",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_004.json",
+        "duration": 14.567,
+        "frameCount": 438
+      },
+      {
+        "id": "episode_005",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_005.json",
+        "duration": 14.367,
+        "frameCount": 432
+      },
+      {
+        "id": "episode_006",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_006.json",
+        "duration": 15.567,
+        "frameCount": 468
+      },
+      {
+        "id": "episode_007",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_007.json",
+        "duration": 16.933,
+        "frameCount": 509
+      },
+      {
+        "id": "episode_008",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_008.json",
+        "duration": 17.0,
+        "frameCount": 511
+      },
+      {
+        "id": "episode_009",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_009.json",
+        "duration": 16.5,
+        "frameCount": 496
+      },
+      {
+        "id": "episode_010",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_010.json",
+        "duration": 14.833,
+        "frameCount": 446
+      },
+      {
+        "id": "episode_011",
+        "file": "datasets/lerobot_bi_so100_pickup_lego/episode_011.json",
+        "duration": 14.367,
+        "frameCount": 432
+      }
+    ]
+  },
+  {
+    "id": "svla_so100_pickplace",
+    "title": "Svla So100 Pickplace",
+    "description": "HuggingFace dataset from lerobot/svla_so100_pickplace",
+    "sourceType": "huggingface",
+    "sourceId": "lerobot/svla_so100_pickplace",
+    "isPremium": false,
+    "createdAt": "2026-02-04T16:01:06.728269",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/svla_so100_pickplace/episode_000.json",
+        "duration": 15.1,
+        "frameCount": 454
+      },
+      {
+        "id": "episode_001",
+        "file": "datasets/svla_so100_pickplace/episode_001.json",
+        "duration": 15.567,
+        "frameCount": 468
+      },
+      {
+        "id": "episode_002",
+        "file": "datasets/svla_so100_pickplace/episode_002.json",
+        "duration": 13.967,
+        "frameCount": 420
+      },
+      {
+        "id": "episode_003",
+        "file": "datasets/svla_so100_pickplace/episode_003.json",
+        "duration": 13.833,
+        "frameCount": 416
+      },
+      {
+        "id": "episode_004",
+        "file": "datasets/svla_so100_pickplace/episode_004.json",
+        "duration": 13.333,
+        "frameCount": 401
+      },
+      {
+        "id": "episode_005",
+        "file": "datasets/svla_so100_pickplace/episode_005.json",
+        "duration": 11.767,
+        "frameCount": 354
+      },
+      {
+        "id": "episode_006",
+        "file": "datasets/svla_so100_pickplace/episode_006.json",
+        "duration": 11.867,
+        "frameCount": 357
+      },
+      {
+        "id": "episode_007",
+        "file": "datasets/svla_so100_pickplace/episode_007.json",
+        "duration": 11.667,
+        "frameCount": 351
+      },
+      {
+        "id": "episode_008",
+        "file": "datasets/svla_so100_pickplace/episode_008.json",
+        "duration": 12.233,
+        "frameCount": 368
+      },
+      {
+        "id": "episode_009",
+        "file": "datasets/svla_so100_pickplace/episode_009.json",
+        "duration": 12.9,
+        "frameCount": 388
+      },
+      {
+        "id": "episode_010",
+        "file": "datasets/svla_so100_pickplace/episode_010.json",
+        "duration": 12.1,
+        "frameCount": 364
+      },
+      {
+        "id": "episode_011",
+        "file": "datasets/svla_so100_pickplace/episode_011.json",
+        "duration": 12.533,
+        "frameCount": 377
+      },
+      {
+        "id": "episode_012",
+        "file": "datasets/svla_so100_pickplace/episode_012.json",
+        "duration": 12.267,
+        "frameCount": 369
+      },
+      {
+        "id": "episode_013",
+        "file": "datasets/svla_so100_pickplace/episode_013.json",
+        "duration": 11.867,
+        "frameCount": 357
+      },
+      {
+        "id": "episode_014",
+        "file": "datasets/svla_so100_pickplace/episode_014.json",
+        "duration": 12.467,
+        "frameCount": 375
+      },
+      {
+        "id": "episode_015",
+        "file": "datasets/svla_so100_pickplace/episode_015.json",
+        "duration": 12.767,
+        "frameCount": 384
+      },
+      {
+        "id": "episode_016",
+        "file": "datasets/svla_so100_pickplace/episode_016.json",
+        "duration": 12.133,
+        "frameCount": 365
+      },
+      {
+        "id": "episode_017",
+        "file": "datasets/svla_so100_pickplace/episode_017.json",
+        "duration": 13.6,
+        "frameCount": 409
+      },
+      {
+        "id": "episode_018",
+        "file": "datasets/svla_so100_pickplace/episode_018.json",
+        "duration": 12.8,
+        "frameCount": 385
+      },
+      {
+        "id": "episode_019",
+        "file": "datasets/svla_so100_pickplace/episode_019.json",
+        "duration": 12.2,
+        "frameCount": 367
+      },
+      {
+        "id": "episode_020",
+        "file": "datasets/svla_so100_pickplace/episode_020.json",
+        "duration": 12.167,
+        "frameCount": 366
+      },
+      {
+        "id": "episode_021",
+        "file": "datasets/svla_so100_pickplace/episode_021.json",
+        "duration": 12.3,
+        "frameCount": 370
+      },
+      {
+        "id": "episode_022",
+        "file": "datasets/svla_so100_pickplace/episode_022.json",
+        "duration": 12.867,
+        "frameCount": 387
+      },
+      {
+        "id": "episode_023",
+        "file": "datasets/svla_so100_pickplace/episode_023.json",
+        "duration": 12.467,
+        "frameCount": 375
+      },
+      {
+        "id": "episode_024",
+        "file": "datasets/svla_so100_pickplace/episode_024.json",
+        "duration": 12.133,
+        "frameCount": 365
+      },
+      {
+        "id": "episode_025",
+        "file": "datasets/svla_so100_pickplace/episode_025.json",
+        "duration": 13.567,
+        "frameCount": 408
+      },
+      {
+        "id": "episode_026",
+        "file": "datasets/svla_so100_pickplace/episode_026.json",
+        "duration": 11.733,
+        "frameCount": 353
+      },
+      {
+        "id": "episode_027",
+        "file": "datasets/svla_so100_pickplace/episode_027.json",
+        "duration": 10.833,
+        "frameCount": 326
+      },
+      {
+        "id": "episode_028",
+        "file": "datasets/svla_so100_pickplace/episode_028.json",
+        "duration": 12.567,
+        "frameCount": 378
+      },
+      {
+        "id": "episode_029",
+        "file": "datasets/svla_so100_pickplace/episode_029.json",
+        "duration": 12.433,
+        "frameCount": 374
+      },
+      {
+        "id": "episode_030",
+        "file": "datasets/svla_so100_pickplace/episode_030.json",
+        "duration": 13.9,
+        "frameCount": 418
+      },
+      {
+        "id": "episode_031",
+        "file": "datasets/svla_so100_pickplace/episode_031.json",
+        "duration": 19.133,
+        "frameCount": 575
+      },
+      {
+        "id": "episode_032",
+        "file": "datasets/svla_so100_pickplace/episode_032.json",
+        "duration": 13.833,
+        "frameCount": 416
+      },
+      {
+        "id": "episode_033",
+        "file": "datasets/svla_so100_pickplace/episode_033.json",
+        "duration": 14.133,
+        "frameCount": 425
+      },
+      {
+        "id": "episode_034",
+        "file": "datasets/svla_so100_pickplace/episode_034.json",
+        "duration": 12.5,
+        "frameCount": 376
+      },
+      {
+        "id": "episode_035",
+        "file": "datasets/svla_so100_pickplace/episode_035.json",
+        "duration": 13.067,
+        "frameCount": 393
+      },
+      {
+        "id": "episode_036",
+        "file": "datasets/svla_so100_pickplace/episode_036.json",
+        "duration": 14.633,
+        "frameCount": 440
+      },
+      {
+        "id": "episode_037",
+        "file": "datasets/svla_so100_pickplace/episode_037.json",
+        "duration": 12.7,
+        "frameCount": 382
+      },
+      {
+        "id": "episode_038",
+        "file": "datasets/svla_so100_pickplace/episode_038.json",
+        "duration": 13.367,
+        "frameCount": 402
+      },
+      {
+        "id": "episode_039",
+        "file": "datasets/svla_so100_pickplace/episode_039.json",
+        "duration": 11.333,
+        "frameCount": 341
+      },
+      {
+        "id": "episode_040",
+        "file": "datasets/svla_so100_pickplace/episode_040.json",
+        "duration": 15.733,
+        "frameCount": 473
+      },
+      {
+        "id": "episode_041",
+        "file": "datasets/svla_so100_pickplace/episode_041.json",
+        "duration": 15.8,
+        "frameCount": 475
+      },
+      {
+        "id": "episode_042",
+        "file": "datasets/svla_so100_pickplace/episode_042.json",
+        "duration": 13.867,
+        "frameCount": 417
+      },
+      {
+        "id": "episode_043",
+        "file": "datasets/svla_so100_pickplace/episode_043.json",
+        "duration": 14.067,
+        "frameCount": 423
+      },
+      {
+        "id": "episode_044",
+        "file": "datasets/svla_so100_pickplace/episode_044.json",
+        "duration": 12.2,
+        "frameCount": 367
+      },
+      {
+        "id": "episode_045",
+        "file": "datasets/svla_so100_pickplace/episode_045.json",
+        "duration": 11.667,
+        "frameCount": 351
+      },
+      {
+        "id": "episode_046",
+        "file": "datasets/svla_so100_pickplace/episode_046.json",
+        "duration": 11.5,
+        "frameCount": 346
+      },
+      {
+        "id": "episode_047",
+        "file": "datasets/svla_so100_pickplace/episode_047.json",
+        "duration": 13.9,
+        "frameCount": 418
+      },
+      {
+        "id": "episode_048",
+        "file": "datasets/svla_so100_pickplace/episode_048.json",
+        "duration": 12.0,
+        "frameCount": 361
+      },
+      {
+        "id": "episode_049",
+        "file": "datasets/svla_so100_pickplace/episode_049.json",
+        "duration": 13.333,
+        "frameCount": 401
+      }
+    ]
+  },
+  {
+    "id": "svla_so100_stacking",
+    "title": "Svla So100 Stacking",
+    "description": "HuggingFace dataset from lerobot/svla_so100_stacking",
+    "sourceType": "huggingface",
+    "sourceId": "lerobot/svla_so100_stacking",
+    "isPremium": false,
+    "createdAt": "2026-02-04T16:01:07.217290",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/svla_so100_stacking/episode_000.json",
+        "duration": 14.867,
+        "frameCount": 447
+      },
+      {
+        "id": "episode_001",
+        "file": "datasets/svla_so100_stacking/episode_001.json",
+        "duration": 13.833,
+        "frameCount": 416
+      },
+      {
+        "id": "episode_002",
+        "file": "datasets/svla_so100_stacking/episode_002.json",
+        "duration": 14.3,
+        "frameCount": 430
+      },
+      {
+        "id": "episode_003",
+        "file": "datasets/svla_so100_stacking/episode_003.json",
+        "duration": 12.233,
+        "frameCount": 368
+      },
+      {
+        "id": "episode_004",
+        "file": "datasets/svla_so100_stacking/episode_004.json",
+        "duration": 11.067,
+        "frameCount": 333
+      },
+      {
+        "id": "episode_005",
+        "file": "datasets/svla_so100_stacking/episode_005.json",
+        "duration": 12.133,
+        "frameCount": 365
+      },
+      {
+        "id": "episode_006",
+        "file": "datasets/svla_so100_stacking/episode_006.json",
+        "duration": 12.867,
+        "frameCount": 387
+      },
+      {
+        "id": "episode_007",
+        "file": "datasets/svla_so100_stacking/episode_007.json",
+        "duration": 14.0,
+        "frameCount": 421
+      },
+      {
+        "id": "episode_008",
+        "file": "datasets/svla_so100_stacking/episode_008.json",
+        "duration": 17.433,
+        "frameCount": 524
+      },
+      {
+        "id": "episode_009",
+        "file": "datasets/svla_so100_stacking/episode_009.json",
+        "duration": 14.033,
+        "frameCount": 422
+      },
+      {
+        "id": "episode_010",
+        "file": "datasets/svla_so100_stacking/episode_010.json",
+        "duration": 15.967,
+        "frameCount": 480
+      },
+      {
+        "id": "episode_011",
+        "file": "datasets/svla_so100_stacking/episode_011.json",
+        "duration": 15.367,
+        "frameCount": 462
+      },
+      {
+        "id": "episode_012",
+        "file": "datasets/svla_so100_stacking/episode_012.json",
+        "duration": 15.267,
+        "frameCount": 459
+      },
+      {
+        "id": "episode_013",
+        "file": "datasets/svla_so100_stacking/episode_013.json",
+        "duration": 13.833,
+        "frameCount": 416
+      },
+      {
+        "id": "episode_014",
+        "file": "datasets/svla_so100_stacking/episode_014.json",
+        "duration": 14.367,
+        "frameCount": 432
+      },
+      {
+        "id": "episode_015",
+        "file": "datasets/svla_so100_stacking/episode_015.json",
+        "duration": 16.7,
+        "frameCount": 502
+      },
+      {
+        "id": "episode_016",
+        "file": "datasets/svla_so100_stacking/episode_016.json",
+        "duration": 15.867,
+        "frameCount": 477
+      },
+      {
+        "id": "episode_017",
+        "file": "datasets/svla_so100_stacking/episode_017.json",
+        "duration": 16.133,
+        "frameCount": 485
+      },
+      {
+        "id": "episode_018",
+        "file": "datasets/svla_so100_stacking/episode_018.json",
+        "duration": 13.967,
+        "frameCount": 420
+      },
+      {
+        "id": "episode_019",
+        "file": "datasets/svla_so100_stacking/episode_019.json",
+        "duration": 14.533,
+        "frameCount": 437
+      },
+      {
+        "id": "episode_020",
+        "file": "datasets/svla_so100_stacking/episode_020.json",
+        "duration": 0.0,
+        "frameCount": 1
+      },
+      {
+        "id": "episode_021",
+        "file": "datasets/svla_so100_stacking/episode_021.json",
+        "duration": 19.2,
+        "frameCount": 577
+      },
+      {
+        "id": "episode_022",
+        "file": "datasets/svla_so100_stacking/episode_022.json",
+        "duration": 15.5,
+        "frameCount": 466
+      },
+      {
+        "id": "episode_023",
+        "file": "datasets/svla_so100_stacking/episode_023.json",
+        "duration": 14.3,
+        "frameCount": 430
+      },
+      {
+        "id": "episode_024",
+        "file": "datasets/svla_so100_stacking/episode_024.json",
+        "duration": 17.267,
+        "frameCount": 519
+      },
+      {
+        "id": "episode_025",
+        "file": "datasets/svla_so100_stacking/episode_025.json",
+        "duration": 16.867,
+        "frameCount": 507
+      },
+      {
+        "id": "episode_026",
+        "file": "datasets/svla_so100_stacking/episode_026.json",
+        "duration": 17.567,
+        "frameCount": 528
+      },
+      {
+        "id": "episode_027",
+        "file": "datasets/svla_so100_stacking/episode_027.json",
+        "duration": 15.733,
+        "frameCount": 473
+      },
+      {
+        "id": "episode_028",
+        "file": "datasets/svla_so100_stacking/episode_028.json",
+        "duration": 15.167,
+        "frameCount": 456
+      },
+      {
+        "id": "episode_029",
+        "file": "datasets/svla_so100_stacking/episode_029.json",
+        "duration": 14.033,
+        "frameCount": 422
+      },
+      {
+        "id": "episode_030",
+        "file": "datasets/svla_so100_stacking/episode_030.json",
+        "duration": 15.633,
+        "frameCount": 470
+      },
+      {
+        "id": "episode_031",
+        "file": "datasets/svla_so100_stacking/episode_031.json",
+        "duration": 12.7,
+        "frameCount": 382
+      },
+      {
+        "id": "episode_032",
+        "file": "datasets/svla_so100_stacking/episode_032.json",
+        "duration": 12.967,
+        "frameCount": 390
+      },
+      {
+        "id": "episode_033",
+        "file": "datasets/svla_so100_stacking/episode_033.json",
+        "duration": 12.967,
+        "frameCount": 390
+      },
+      {
+        "id": "episode_034",
+        "file": "datasets/svla_so100_stacking/episode_034.json",
+        "duration": 12.967,
+        "frameCount": 390
+      },
+      {
+        "id": "episode_035",
+        "file": "datasets/svla_so100_stacking/episode_035.json",
+        "duration": 14.033,
+        "frameCount": 422
+      },
+      {
+        "id": "episode_036",
+        "file": "datasets/svla_so100_stacking/episode_036.json",
+        "duration": 17.1,
+        "frameCount": 514
+      },
+      {
+        "id": "episode_037",
+        "file": "datasets/svla_so100_stacking/episode_037.json",
+        "duration": 0.433,
+        "frameCount": 14
+      },
+      {
+        "id": "episode_038",
+        "file": "datasets/svla_so100_stacking/episode_038.json",
+        "duration": 0.9,
+        "frameCount": 28
+      },
+      {
+        "id": "episode_039",
+        "file": "datasets/svla_so100_stacking/episode_039.json",
+        "duration": 14.433,
+        "frameCount": 434
+      },
+      {
+        "id": "episode_040",
+        "file": "datasets/svla_so100_stacking/episode_040.json",
+        "duration": 14.0,
+        "frameCount": 421
+      },
+      {
+        "id": "episode_041",
+        "file": "datasets/svla_so100_stacking/episode_041.json",
+        "duration": 16.667,
+        "frameCount": 501
+      },
+      {
+        "id": "episode_042",
+        "file": "datasets/svla_so100_stacking/episode_042.json",
+        "duration": 14.167,
+        "frameCount": 426
+      },
+      {
+        "id": "episode_043",
+        "file": "datasets/svla_so100_stacking/episode_043.json",
+        "duration": 14.367,
+        "frameCount": 432
+      },
+      {
+        "id": "episode_044",
+        "file": "datasets/svla_so100_stacking/episode_044.json",
+        "duration": 12.733,
+        "frameCount": 383
+      },
+      {
+        "id": "episode_045",
+        "file": "datasets/svla_so100_stacking/episode_045.json",
+        "duration": 11.9,
+        "frameCount": 358
+      },
+      {
+        "id": "episode_046",
+        "file": "datasets/svla_so100_stacking/episode_046.json",
+        "duration": 12.2,
+        "frameCount": 367
+      },
+      {
+        "id": "episode_047",
+        "file": "datasets/svla_so100_stacking/episode_047.json",
+        "duration": 15.1,
+        "frameCount": 454
+      },
+      {
+        "id": "episode_048",
+        "file": "datasets/svla_so100_stacking/episode_048.json",
+        "duration": 14.967,
+        "frameCount": 450
+      },
+      {
+        "id": "episode_049",
+        "file": "datasets/svla_so100_stacking/episode_049.json",
+        "duration": 17.267,
+        "frameCount": 519
+      },
+      {
+        "id": "episode_050",
+        "file": "datasets/svla_so100_stacking/episode_050.json",
+        "duration": 14.367,
+        "frameCount": 432
+      },
+      {
+        "id": "episode_051",
+        "file": "datasets/svla_so100_stacking/episode_051.json",
+        "duration": 11.433,
+        "frameCount": 344
+      },
+      {
+        "id": "episode_052",
+        "file": "datasets/svla_so100_stacking/episode_052.json",
+        "duration": 12.533,
+        "frameCount": 377
+      },
+      {
+        "id": "episode_053",
+        "file": "datasets/svla_so100_stacking/episode_053.json",
+        "duration": 13.767,
+        "frameCount": 414
+      },
+      {
+        "id": "episode_054",
+        "file": "datasets/svla_so100_stacking/episode_054.json",
+        "duration": 14.667,
+        "frameCount": 441
+      },
+      {
+        "id": "episode_055",
+        "file": "datasets/svla_so100_stacking/episode_055.json",
+        "duration": 4.667,
+        "frameCount": 141
+      }
+    ]
+  },
+  {
+    "id": "svla_so100_sorting",
+    "title": "Svla So100 Sorting",
+    "description": "HuggingFace dataset from lerobot/svla_so100_sorting",
+    "sourceType": "huggingface",
+    "sourceId": "lerobot/svla_so100_sorting",
+    "isPremium": false,
+    "createdAt": "2026-02-04T16:01:07.963764",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/svla_so100_sorting/episode_000.json",
+        "duration": 32.033,
+        "frameCount": 962
+      },
+      {
+        "id": "episode_001",
+        "file": "datasets/svla_so100_sorting/episode_001.json",
+        "duration": 26.5,
+        "frameCount": 796
+      },
+      {
+        "id": "episode_002",
+        "file": "datasets/svla_so100_sorting/episode_002.json",
+        "duration": 25.567,
+        "frameCount": 768
+      },
+      {
+        "id": "episode_003",
+        "file": "datasets/svla_so100_sorting/episode_003.json",
+        "duration": 24.467,
+        "frameCount": 735
+      },
+      {
+        "id": "episode_004",
+        "file": "datasets/svla_so100_sorting/episode_004.json",
+        "duration": 24.033,
+        "frameCount": 722
+      },
+      {
+        "id": "episode_005",
+        "file": "datasets/svla_so100_sorting/episode_005.json",
+        "duration": 25.8,
+        "frameCount": 775
+      },
+      {
+        "id": "episode_006",
+        "file": "datasets/svla_so100_sorting/episode_006.json",
+        "duration": 25.167,
+        "frameCount": 756
+      },
+      {
+        "id": "episode_007",
+        "file": "datasets/svla_so100_sorting/episode_007.json",
+        "duration": 25.967,
+        "frameCount": 780
+      },
+      {
+        "id": "episode_008",
+        "file": "datasets/svla_so100_sorting/episode_008.json",
+        "duration": 11.267,
+        "frameCount": 339
+      },
+      {
+        "id": "episode_009",
+        "file": "datasets/svla_so100_sorting/episode_009.json",
+        "duration": 21.5,
+        "frameCount": 646
+      },
+      {
+        "id": "episode_010",
+        "file": "datasets/svla_so100_sorting/episode_010.json",
+        "duration": 26.067,
+        "frameCount": 783
+      },
+      {
+        "id": "episode_011",
+        "file": "datasets/svla_so100_sorting/episode_011.json",
+        "duration": 27.533,
+        "frameCount": 827
+      },
+      {
+        "id": "episode_012",
+        "file": "datasets/svla_so100_sorting/episode_012.json",
+        "duration": 22.667,
+        "frameCount": 681
+      },
+      {
+        "id": "episode_013",
+        "file": "datasets/svla_so100_sorting/episode_013.json",
+        "duration": 24.0,
+        "frameCount": 721
+      },
+      {
+        "id": "episode_014",
+        "file": "datasets/svla_so100_sorting/episode_014.json",
+        "duration": 23.367,
+        "frameCount": 702
+      },
+      {
+        "id": "episode_015",
+        "file": "datasets/svla_so100_sorting/episode_015.json",
+        "duration": 26.133,
+        "frameCount": 785
+      },
+      {
+        "id": "episode_016",
+        "file": "datasets/svla_so100_sorting/episode_016.json",
+        "duration": 24.433,
+        "frameCount": 734
+      },
+      {
+        "id": "episode_017",
+        "file": "datasets/svla_so100_sorting/episode_017.json",
+        "duration": 22.967,
+        "frameCount": 690
+      },
+      {
+        "id": "episode_018",
+        "file": "datasets/svla_so100_sorting/episode_018.json",
+        "duration": 23.667,
+        "frameCount": 711
+      },
+      {
+        "id": "episode_019",
+        "file": "datasets/svla_so100_sorting/episode_019.json",
+        "duration": 25.2,
+        "frameCount": 757
+      },
+      {
+        "id": "episode_020",
+        "file": "datasets/svla_so100_sorting/episode_020.json",
+        "duration": 24.967,
+        "frameCount": 750
+      },
+      {
+        "id": "episode_021",
+        "file": "datasets/svla_so100_sorting/episode_021.json",
+        "duration": 28.367,
+        "frameCount": 852
+      },
+      {
+        "id": "episode_022",
+        "file": "datasets/svla_so100_sorting/episode_022.json",
+        "duration": 24.767,
+        "frameCount": 744
+      },
+      {
+        "id": "episode_023",
+        "file": "datasets/svla_so100_sorting/episode_023.json",
+        "duration": 1.667,
+        "frameCount": 51
+      },
+      {
+        "id": "episode_024",
+        "file": "datasets/svla_so100_sorting/episode_024.json",
+        "duration": 23.0,
+        "frameCount": 691
+      },
+      {
+        "id": "episode_025",
+        "file": "datasets/svla_so100_sorting/episode_025.json",
+        "duration": 24.133,
+        "frameCount": 725
+      },
+      {
+        "id": "episode_026",
+        "file": "datasets/svla_so100_sorting/episode_026.json",
+        "duration": 23.167,
+        "frameCount": 696
+      },
+      {
+        "id": "episode_027",
+        "file": "datasets/svla_so100_sorting/episode_027.json",
+        "duration": 22.5,
+        "frameCount": 676
+      },
+      {
+        "id": "episode_028",
+        "file": "datasets/svla_so100_sorting/episode_028.json",
+        "duration": 23.667,
+        "frameCount": 711
+      },
+      {
+        "id": "episode_029",
+        "file": "datasets/svla_so100_sorting/episode_029.json",
+        "duration": 25.4,
+        "frameCount": 763
+      },
+      {
+        "id": "episode_030",
+        "file": "datasets/svla_so100_sorting/episode_030.json",
+        "duration": 26.033,
+        "frameCount": 782
+      },
+      {
+        "id": "episode_031",
+        "file": "datasets/svla_so100_sorting/episode_031.json",
+        "duration": 22.533,
+        "frameCount": 677
+      },
+      {
+        "id": "episode_032",
+        "file": "datasets/svla_so100_sorting/episode_032.json",
+        "duration": 22.233,
+        "frameCount": 668
+      },
+      {
+        "id": "episode_033",
+        "file": "datasets/svla_so100_sorting/episode_033.json",
+        "duration": 21.033,
+        "frameCount": 632
+      },
+      {
+        "id": "episode_034",
+        "file": "datasets/svla_so100_sorting/episode_034.json",
+        "duration": 17.833,
+        "frameCount": 536
+      },
+      {
+        "id": "episode_035",
+        "file": "datasets/svla_so100_sorting/episode_035.json",
+        "duration": 20.167,
+        "frameCount": 606
+      },
+      {
+        "id": "episode_036",
+        "file": "datasets/svla_so100_sorting/episode_036.json",
+        "duration": 20.633,
+        "frameCount": 620
+      },
+      {
+        "id": "episode_037",
+        "file": "datasets/svla_so100_sorting/episode_037.json",
+        "duration": 24.8,
+        "frameCount": 745
+      },
+      {
+        "id": "episode_038",
+        "file": "datasets/svla_so100_sorting/episode_038.json",
+        "duration": 21.8,
+        "frameCount": 655
+      },
+      {
+        "id": "episode_039",
+        "file": "datasets/svla_so100_sorting/episode_039.json",
+        "duration": 21.267,
+        "frameCount": 639
+      },
+      {
+        "id": "episode_040",
+        "file": "datasets/svla_so100_sorting/episode_040.json",
+        "duration": 20.567,
+        "frameCount": 618
+      },
+      {
+        "id": "episode_041",
+        "file": "datasets/svla_so100_sorting/episode_041.json",
+        "duration": 20.333,
+        "frameCount": 611
+      },
+      {
+        "id": "episode_042",
+        "file": "datasets/svla_so100_sorting/episode_042.json",
+        "duration": 23.233,
+        "frameCount": 698
+      },
+      {
+        "id": "episode_043",
+        "file": "datasets/svla_so100_sorting/episode_043.json",
+        "duration": 20.833,
+        "frameCount": 626
+      },
+      {
+        "id": "episode_044",
+        "file": "datasets/svla_so100_sorting/episode_044.json",
+        "duration": 22.8,
+        "frameCount": 685
+      },
+      {
+        "id": "episode_045",
+        "file": "datasets/svla_so100_sorting/episode_045.json",
+        "duration": 22.367,
+        "frameCount": 672
+      },
+      {
+        "id": "episode_046",
+        "file": "datasets/svla_so100_sorting/episode_046.json",
+        "duration": 22.967,
+        "frameCount": 690
+      },
+      {
+        "id": "episode_047",
+        "file": "datasets/svla_so100_sorting/episode_047.json",
+        "duration": 21.067,
+        "frameCount": 633
+      },
+      {
+        "id": "episode_048",
+        "file": "datasets/svla_so100_sorting/episode_048.json",
+        "duration": 20.233,
+        "frameCount": 608
+      },
+      {
+        "id": "episode_049",
+        "file": "datasets/svla_so100_sorting/episode_049.json",
+        "duration": 22.333,
+        "frameCount": 671
+      },
+      {
+        "id": "episode_050",
+        "file": "datasets/svla_so100_sorting/episode_050.json",
+        "duration": 22.6,
+        "frameCount": 679
+      },
+      {
+        "id": "episode_051",
+        "file": "datasets/svla_so100_sorting/episode_051.json",
+        "duration": 21.067,
+        "frameCount": 633
+      }
+    ]
+  },
+  {
+    "id": "digital_twin_premium",
+    "title": "Digital Twin Premium: Precision Pickup",
+    "description": "Expert level demonstration recorded using high-fidelity digital twin synchronization. Optimized for minimal latency and maximum precision.",
+    "sourceType": "local",
+    "sourceId": "test_session_09",
+    "isPremium": true,
+    "price": 25,
+    "createdAt": "2026-02-04T16:30:00Z",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/digital_twin_premium/episode_000.json",
+        "duration": 14.269,
+        "frameCount": 276
+      }
+    ]
+  },
+  {
+    "id": "e3b1e866-0d0c-48b7-9e7d-75f8dd2a3b16",
+    "title": "Premium Motion: Teleop Session 03",
+    "description": "Expert teleoperation session featuring high-precision movements. Premium quality motion data.",
+    "sourceType": "local",
+    "sourceId": "../records/test_session_03",
+    "isPremium": true,
+    "price": 25,
+    "createdAt": "2026-02-05T16:03:29.725571",
+    "episodes": [
+      {
+        "id": "episode_000",
+        "file": "datasets/e3b1e866-0d0c-48b7-9e7d-75f8dd2a3b16/episode_000.json",
+        "duration": 12.2,
+        "frameCount": 244
+      }
+    ]
+  }
+]

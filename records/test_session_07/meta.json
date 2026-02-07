@@ -1,0 +1,10 @@
+{
+  "fps": 20.0,
+  "vr_only": false,
+  "start_time": 1770399215.9533098,
+  "end_time": 1770399360.4958963,
+  "duration_sec": 144.5425865650177,
+  "episode_index": 0,
+  "num_vr_raw": 1736,
+  "num_robot_goal_frames": 281
+}
