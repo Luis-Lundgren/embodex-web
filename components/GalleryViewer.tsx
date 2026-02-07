@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { GalleryItem } from './GalleryItem';
 const ViewerScene = dynamic(() => import('./ViewerScene'), { ssr: false });
 
@@ -151,18 +151,18 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                             </>
                         ) : (
                             <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => signIn('google')}
-                                    className="px-4 py-2 border border-blue-500/50 rounded-lg text-white/90 text-[10px] font-black uppercase tracking-widest hover:bg-blue-600/10 transition-colors"
+                                <Link
+                                    href="/coming-soon"
+                                    className="px-4 py-2 border border-blue-500/50 rounded-lg text-white/90 text-[10px] font-black uppercase tracking-widest hover:bg-blue-600/10 transition-colors flex items-center justify-center"
                                 >
                                     Login
-                                </button>
-                                <button
-                                    onClick={() => signIn('google')}
-                                    className="px-4 py-2 bg-blue-600 rounded-lg text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20"
+                                </Link>
+                                <Link
+                                    href="/coming-soon"
+                                    className="px-4 py-2 bg-blue-600 rounded-lg text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20 flex items-center justify-center"
                                 >
                                     Sign Up
-                                </button>
+                                </Link>
                             </div>
                         )}
                     </div>
