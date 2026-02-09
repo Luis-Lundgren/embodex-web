@@ -77,6 +77,17 @@ function TeleopContent() {
         return `https://${host}:8443${path}`;
     }, []);
 
+    const getWsUrl = useCallback(() => {
+        const base = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (base) {
+            // Convert https://... to wss://...
+            const url = base.startsWith('http') ? base : `https://${base}`;
+            return url.replace(/^http/, 'ws').replace(/\/$/, '');
+        }
+        const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+        return `wss://${host}:8442`;
+    }, []);
+
     const fetchStatus = useCallback(async () => {
         try {
             const res = await fetch(getApiUrl('/api/status'));
@@ -132,6 +143,7 @@ function TeleopContent() {
     }, [fetchStatus, connectRobot]);
 
     const { connect, isConnected, sendControllerData, sendAction } = useTeleopClient({
+        url: getWsUrl(),
         onRobotState: handleRobotState,
         onStatusChange: handleStatusChange
     });

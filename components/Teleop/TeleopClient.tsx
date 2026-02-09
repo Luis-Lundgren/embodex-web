@@ -17,10 +17,9 @@ export function useTeleopClient({ onRobotState, onStatusChange, url = "wss://loc
         if (ws.current?.readyState === WebSocket.OPEN) return;
 
         let targetUrl = url;
-        if (targetUrl.includes("localhost")) {
-            targetUrl = targetUrl.replace("localhost", window.location.hostname);
-        } else if (targetUrl.includes("127.0.0.1")) {
-            targetUrl = targetUrl.replace("127.0.0.1", window.location.hostname);
+        if (targetUrl.includes("localhost") || targetUrl.includes("127.0.0.1")) {
+            const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+            targetUrl = targetUrl.replace("localhost", host).replace("127.0.0.1", host);
         }
 
         console.log(`Connecting to TeleGrip backend at ${targetUrl}...`);
