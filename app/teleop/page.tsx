@@ -68,6 +68,11 @@ function TeleopContent() {
     }, [status.recording]);
 
     const getApiUrl = useCallback((path: string) => {
+        const base = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (base) {
+            const url = base.startsWith('http') ? base : `https://${base}`;
+            return `${url.replace(/\/$/, '')}${path}`;
+        }
         const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
         return `https://${host}:8443${path}`;
     }, []);
