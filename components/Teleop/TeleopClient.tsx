@@ -8,7 +8,9 @@ interface TeleopClientProps {
     url?: string;
 }
 
-export function useTeleopClient({ onRobotState, onStatusChange, url = "wss://localhost:8442" }: TeleopClientProps) {
+import { TELEGRIP_WS_URL } from '@/lib/config';
+
+export function useTeleopClient({ onRobotState, onStatusChange, url = TELEGRIP_WS_URL }: TeleopClientProps) {
     const ws = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessageTime, setLastMessageTime] = useState(0);

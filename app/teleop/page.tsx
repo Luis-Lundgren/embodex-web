@@ -4,6 +4,7 @@ import { useTeleopClient } from "@/components/Teleop/TeleopClient";
 import { VRScene } from "@/components/Teleop/VRScene";
 import { TeleopControls } from "@/components/Teleop/Controls";
 import SessionReview from "@/components/Teleop/SessionReview";
+import { TELEGRIP_WS_URL, TELEGRIP_HTTP_URL } from "@/lib/config";
 import { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -68,24 +69,11 @@ function TeleopContent() {
     }, [status.recording]);
 
     const getApiUrl = useCallback((path: string) => {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL;
-        if (base) {
-            const url = base.startsWith('http') ? base : `https://${base}`;
-            return `${url.replace(/\/$/, '')}${path}`;
-        }
-        const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-        return `https://${host}:8443${path}`;
+        return `${TELEGRIP_HTTP_URL.replace(/\/$/, '')}${path}`;
     }, []);
 
     const getWsUrl = useCallback(() => {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL;
-        if (base) {
-            // Convert https://... to wss://...
-            const url = base.startsWith('http') ? base : `https://${base}`;
-            return url.replace(/^http/, 'ws').replace(/\/$/, '');
-        }
-        const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-        return `wss://${host}:8442`;
+        return TELEGRIP_WS_URL;
     }, []);
 
     const fetchStatus = useCallback(async () => {

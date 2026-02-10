@@ -80,6 +80,14 @@ This project uses Google Authentication. To set it up:
      ```
    - To generate a `NEXTAUTH_SECRET`, you can run: `openssl rand -hex 32`
 
+### TeleGrip Backend (Railway)
+If you are connecting to a remote TeleGrip backend (e.g., on Railway):
+```env
+NEXT_PUBLIC_TELEGRIP_WS_URL=wss://your-backend.up.railway.app/ws
+NEXT_PUBLIC_TELEGRIP_HTTP_URL=https://your-backend.up.railway.app
+```
+*Note: The WebSocket URL must include the `/ws` path, and production URLs should not specify a port.*
+
 3. **Database Migration**
    - Ensure you've run the latest migrations to include auth tables:
      ```bash
