@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
@@ -15,8 +16,8 @@ export default function LoginPage() {
                         <p className="text-slate-400 mt-2">Sign in to continue</p>
                     </div>
 
-                    <Link
-                        href="/coming-soon"
+                    <button
+                        onClick={() => signIn('google', { callbackUrl: '/' })}
                         className="w-full bg-white text-slate-900 py-3 rounded-lg font-semibold flex items-center justify-center gap-3 hover:bg-slate-200 transition-colors"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -38,7 +39,7 @@ export default function LoginPage() {
                             />
                         </svg>
                         Continue with Google
-                    </Link>
+                    </button>
 
                     <p className="mt-8 text-center text-xs text-slate-500">
                         By continuing, you agree to our Terms of Service and Privacy Policy.
