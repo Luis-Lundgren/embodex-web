@@ -11,6 +11,19 @@ const nextConfig = {
         ],
     },
     transpilePackages: ['three', '@react-three/fiber', '@react-three/drei'],
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Content-Security-Policy',
+                        value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://ssl.gstatic.com; object-src 'none'; frame-src https://accounts.google.com;",
+                    },
+                ],
+            },
+        ];
+    },
     webpack: (config, { dev }) => {
         if (dev) {
             config.watchOptions = {

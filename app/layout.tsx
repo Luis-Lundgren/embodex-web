@@ -17,6 +17,23 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="h-full">
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                                if (!window.trustedTypes.defaultPolicy) {
+                                    window.trustedTypes.createPolicy('default', {
+                                        createHTML: (string) => string,
+                                        createScriptURL: (string) => string,
+                                        createScript: (string) => string,
+                                    });
+                                }
+                            }
+                        `,
+                    }}
+                />
+            </head>
             <body className={`${inter.className} h-full overflow-hidden bg-slate-950 text-gray-200`}>
                 <Providers>
                     {children}
