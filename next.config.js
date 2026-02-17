@@ -18,7 +18,7 @@ const nextConfig = {
                 headers: [
                     {
                         key: 'Content-Security-Policy',
-                        value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://ssl.gstatic.com; object-src 'none'; frame-src https://accounts.google.com;",
+                        value: "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://ssl.gstatic.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; object-src 'none'; frame-src https://accounts.google.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/;",
                     },
                 ],
             },
