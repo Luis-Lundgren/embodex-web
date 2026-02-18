@@ -28,8 +28,9 @@ export default function OnboardingForm() {
             });
 
             if (res.ok) {
-                router.refresh(); // Refresh session to get new role
-                router.push('/');
+                // IMPORTANT: We need a full window reload to force NextAuth to 
+                // re-run the JWT callback and pick up the brand new database roles.
+                window.location.href = '/?onboarded=true';
             } else {
                 console.error('Onboarding failed');
                 // Handle error state
@@ -50,8 +51,8 @@ export default function OnboardingForm() {
                 <button
                     onClick={() => setSelectedRole('teleoperator')}
                     className={`relative group p-8 rounded-2xl border-2 transition-all duration-300 text-left hover:scale-[1.02] ${selectedRole === 'teleoperator'
-                            ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.3)]'
-                            : 'border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900'
+                        ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.3)]'
+                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900'
                         }`}
                 >
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${selectedRole === 'teleoperator' ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
@@ -67,8 +68,8 @@ export default function OnboardingForm() {
                 <button
                     onClick={() => setSelectedRole('lab')}
                     className={`relative group p-8 rounded-2xl border-2 transition-all duration-300 text-left hover:scale-[1.02] ${selectedRole === 'lab'
-                            ? 'border-purple-500 bg-purple-500/10 shadow-[0_0_30px_rgba(168,85,247,0.3)]'
-                            : 'border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900'
+                        ? 'border-purple-500 bg-purple-500/10 shadow-[0_0_30px_rgba(168,85,247,0.3)]'
+                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700 hover:bg-slate-900'
                         }`}
                 >
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${selectedRole === 'lab' ? 'bg-purple-500 text-white' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
@@ -121,8 +122,8 @@ export default function OnboardingForm() {
                             type="submit"
                             disabled={isSubmitting}
                             className={`w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2 transition-all ${selectedRole === 'teleoperator'
-                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/20'
-                                    : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 shadow-lg shadow-purple-500/20'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/20'
+                                : 'bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 shadow-lg shadow-purple-500/20'
                                 }`}
                         >
                             {isSubmitting ? 'Setting up...' : (

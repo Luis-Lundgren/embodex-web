@@ -62,25 +62,13 @@ export default function SignupPage() {
                 throw new Error(data.error || "Something went wrong");
             }
 
-            setSuccess(true);
+            // Auto-signin or redirect to login
+            router.push("/login?message=Account created! Please sign in.");
         } catch (err: any) {
             setError(err.message);
-        } finally {
-            setLoading(false);
+            setLoading(false); // Only stop loading on error, otherwise keep it while redirecting
         }
     };
-
-    if (success) {
-        return (
-            <main className="min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black p-4">
-                <div className="relative z-10 w-full max-w-md bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-md shadow-2xl text-center">
-                    <h1 className="text-2xl font-bold text-white mb-4">Check your email</h1>
-                    <p className="text-slate-400 mb-6">We have sent a verification link to your email address.</p>
-                    <Link href="/login" className="text-blue-400 hover:text-blue-300">Back to Login</Link>
-                </div>
-            </main>
-        );
-    }
 
     return (
         <main className="min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black p-4">

@@ -39,9 +39,12 @@ export async function POST(req: Request) {
             data: {
                 email,
                 password: hashedPassword,
+                emailVerified: new Date(), // Auto-verify for Alpha
             },
         });
 
+        // Email verification disabled for Alpha
+        /*
         const token = uuidv4();
         const expires = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); // 24 hours
 
@@ -55,13 +58,15 @@ export async function POST(req: Request) {
 
         try {
             await sendVerificationEmail(email, token);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to send email:", error);
-            // We don't fail the request if email fails, but maybe strictly we should?
-            // For now, let's just log it.
+            // Delete the user so they can try again once email is fixed
+            await prisma.user.delete({ where: { id: user.id } });
+            return NextResponse.json({ error: `Could not send verification email: ${error.message}` }, { status: 500 });
         }
+        */
 
-        return NextResponse.json({ message: "User created. Please check your email." });
+        return NextResponse.json({ message: "Account created successfully" });
 
     } catch (error) {
         console.error(error);

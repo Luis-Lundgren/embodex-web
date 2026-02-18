@@ -68,28 +68,54 @@ export const authOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async session({ session, user }) {
-            if (session.user) {
-                // @ts-ignore
-                session.user.id = user.id;
+        async jwt({ token, user: nextAuthUser }) {
+            if (nextAuthUser) {
+                token.id = nextAuthUser.id;
+            }
 
-                // Fetch roles to include in session
-                // @ts-ignore
-                const userRoles = await prisma.userRole.findMany({
-                    where: { userId: user.id },
+            if (token.id) {
+                // Fetch full user data including roles and profiles
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.id as string },
+                    include: {
+                        roles: true,
+                        teleoperatorProfile: true,
+                        labProfile: true,
+                    },
                 });
 
+                if (dbUser) {
+                    token.roles = dbUser.roles.map(r => r.role);
+
+                    // Determine best display name based on role
+                    if (dbUser.teleoperatorProfile?.displayName) {
+                        token.name = dbUser.teleoperatorProfile.displayName;
+                    } else if (dbUser.labProfile?.orgName) {
+                        token.name = dbUser.labProfile.orgName;
+                    } else {
+                        token.name = dbUser.name || dbUser.email?.split('@')[0] || "User";
+                    }
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session.user) {
                 // @ts-ignore
-                session.user.roles = userRoles.map(r => r.role);
+                session.user.id = token.id;
+                // @ts-ignore
+                session.user.roles = token.roles || [];
+                // Use the name prioritized in the JWT callback
+                session.user.name = token.name as string;
             }
             return session;
         },
     },
     pages: {
         signIn: '/login',
-        newUser: '/onboarding', // Redirect here after first login
+        newUser: '/onboarding',
     },
     session: {
-        strategy: "database"
+        strategy: "jwt"
     }
 };

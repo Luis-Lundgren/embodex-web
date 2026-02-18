@@ -158,7 +158,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                                     Login
                                 </Link>
                                 <Link
-                                    href="/login"
+                                    href="/signup"
                                     className="px-4 py-2 bg-blue-600 rounded-lg text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20 flex items-center justify-center"
                                 >
                                     Sign Up
