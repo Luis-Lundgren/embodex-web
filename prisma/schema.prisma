@@ -18,16 +18,22 @@ model Dataset {
   sourceType  String
   sourceId    String
   localPath   String?
+  status      String?  @default("DRAFT")
   createdAt   DateTime @default(now())
+  
+  ownerId     String?
+  owner       User?    @relation("UserDatasets", fields: [ownerId], references: [id])
+  
   episodes    Episode[]
 }
 
 model Episode {
-  id        String  @id @default(uuid())
-  datasetId String
-  dataset   Dataset @relation(fields: [datasetId], references: [id])
-  filePath  String
-  duration  Float
+  id         String  @id @default(uuid())
+  datasetId  String
+  dataset    Dataset @relation(fields: [datasetId], references: [id])
+  filePath   String?
+  data       Json?
+  duration   Float
   frameCount Int
 }
 
@@ -82,6 +88,7 @@ model User {
   roles               UserRole[]
   teleoperatorProfile TeleoperatorProfile?
   labProfile          LabProfile?
+  datasets            Dataset[] @relation("UserDatasets")
   
   // Existing system needs (optional, can link these later if needed)
   createdAt DateTime @default(now())

@@ -22,19 +22,18 @@ function TeleopContent() {
         recording: false
     });
 
+    const [detecting, setDetecting] = useState(false);
+
     const [reviewSessionId, setReviewSessionId] = useState<string | null>(null);
     const wasRecording = useRef(false);
 
     // Check roles and redirect if needed
     useEffect(() => {
-        if (authStatus === 'authenticated' && session?.user) {
-            // @ts-ignore
-            const roles = session.user.roles || [];
-            if (roles.length === 0) {
-                router.push('/onboarding');
-            }
+        if (authStatus === 'unauthenticated') {
+            router.push('/login');
         }
-    }, [authStatus, session, router]);
+        // During dev/after reset, we'll be more lenient with roles on the teleop page
+    }, [authStatus, router]);
 
     const handleRobotState = useCallback((state: any) => {
         setRobotState(state);
@@ -50,17 +49,22 @@ function TeleopContent() {
     // Detect when recording session finishes
     useEffect(() => {
         if (wasRecording.current && !status.recording) {
+            setDetecting(true);
             // Just finished recording, look for newest session after a small delay
             const detectSession = async () => {
                 await new Promise(r => setTimeout(r, 1000));
                 try {
                     const res = await fetch('/api/teleop/sessions');
                     const sessions = await res.json();
-                    if (sessions && sessions.length > 0) {
+
+                    // Be more lenient: if it's an array and has items, use it.
+                    if (Array.isArray(sessions) && sessions.length > 0) {
                         setReviewSessionId(sessions[0].id);
                     }
                 } catch (e) {
-                    console.error("Failed to detect latest record session");
+                    console.error("Failed to detect latest record session:", e);
+                } finally {
+                    setDetecting(false);
                 }
             };
             detectSession();
@@ -147,6 +151,13 @@ function TeleopContent() {
 
     return (
         <main className="w-full h-screen bg-black overflow-hidden relative">
+            {detecting && (
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[200] bg-blue-600 text-white px-6 py-3 rounded-full font-bold animate-pulse shadow-2xl flex items-center gap-3">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processing Recording...
+                </div>
+            )}
+
             {reviewSessionId && (
                 <SessionReview
                     sessionId={reviewSessionId}

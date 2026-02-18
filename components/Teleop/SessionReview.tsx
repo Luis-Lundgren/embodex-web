@@ -20,11 +20,14 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
+    const [rawPayload, setRawPayload] = useState<any>(null);
+
     useEffect(() => {
         async function loadSession() {
             try {
                 const res = await fetch(`/api/teleop/sessions?sessionId=${sessionId}`);
                 const json = await res.json();
+                setRawPayload(json);
 
                 let jointPositions = [];
 
@@ -33,7 +36,6 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                 } else if (json.joint_positions) {
                     jointPositions = json.joint_positions;
                 } else if (Array.isArray(json)) {
-                    // Maybe the root is an array of frames
                     jointPositions = json;
                 }
 
@@ -69,6 +71,33 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
     const handleSubmit = async () => {
         setSubmitting(true);
         try {
+            let currentDatasetId = rawPayload?.datasetId;
+            let currentEpisodeId = rawPayload?.episodeId;
+
+            if (!currentDatasetId || !currentEpisodeId) {
+                // 1. Ingest into Cloud Database (only if not already there)
+                const ingestRes = await fetch('/api/teleop/session/ingest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...rawPayload,
+                        session_id: sessionId,
+                        jobId: jobId
+                    })
+                });
+
+                if (!ingestRes.ok) {
+                    throw new Error("Ingestion failed");
+                }
+
+                const ingestData = await ingestRes.json();
+                currentDatasetId = ingestData.datasetId;
+                currentEpisodeId = ingestData.episodeId;
+            } else {
+                console.log("Session already in cloud DB, skipping ingest.");
+            }
+
+            // 2. Create Submission Request
             const res = await fetch('/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -77,17 +106,21 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                     payload: {
                         sessionId,
                         jobId,
+                        datasetId: currentDatasetId,
+                        episodeId: currentEpisodeId,
                         title: `Submission for Job ${jobId || 'Unknown'}`,
                         recordedAt: new Date().toISOString()
                     }
                 })
             });
+
             if (res.ok) {
                 setSubmitted(true);
                 setTimeout(onClose, 2000);
             }
         } catch (e) {
-            alert("Submission failed");
+            console.error(e);
+            alert("Submission failed during cloud sync.");
         } finally {
             setSubmitting(false);
         }
