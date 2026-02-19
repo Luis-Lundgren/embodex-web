@@ -70,12 +70,12 @@ export default function ReviewInterface({
 
     // Animation Loop
     const animate = (time: number) => {
-        if (lastTimeRef.current !== undefined && data) {
+        if (lastTimeRef.current !== undefined && data?.joint_positions?.length) {
             const deltaTime = time - lastTimeRef.current;
 
             if (isPlaying) {
                 accumulatorRef.current += deltaTime * playbackSpeed;
-                const msPerFrame = 1000 / data.fps;
+                const msPerFrame = 1000 / (data.fps || 30); // Default to 30fps if missing
 
                 if (accumulatorRef.current >= msPerFrame) {
                     const framesToAdvance = Math.floor(accumulatorRef.current / msPerFrame);
@@ -234,19 +234,19 @@ export default function ReviewInterface({
                     <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase tracking-widest px-1">
                         <span>Playback Progress</span>
                         <span className="text-purple-400">
-                            {currentFrame} / {data?.joint_positions.length || 0} ({data ? formatTime(currentFrame, data.fps) : '0.00s'})
+                            {currentFrame} / {data?.joint_positions?.length || 0} ({data?.fps ? formatTime(currentFrame, data.fps) : '0.00s'})
                         </span>
                     </div>
                     <div className="relative h-1.5 group cursor-pointer w-full">
                         <div className="absolute inset-0 bg-white/10 rounded-full" />
                         <div
                             className="absolute h-full bg-purple-500 rounded-full transition-all duration-75"
-                            style={{ width: `${(currentFrame / ((data?.joint_positions.length || 1) - 1)) * 100}%` }}
+                            style={{ width: `${(currentFrame / ((data?.joint_positions?.length || 1) - 1)) * 100}%` }}
                         />
                         <input
                             type="range"
                             min="0"
-                            max={data?.joint_positions.length ? data.joint_positions.length - 1 : 0}
+                            max={data?.joint_positions?.length ? data.joint_positions.length - 1 : 0}
                             value={currentFrame}
                             onChange={(e) => { setIsPlaying(false); setCurrentFrame(parseInt(e.target.value)); }}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
