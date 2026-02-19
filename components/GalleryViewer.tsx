@@ -117,7 +117,10 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                                 )}
                                 {/* @ts-ignore */}
                                 {session.user?.roles?.includes('lab') && (
-                                    <Link href="/request" className="text-[11px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 transition-colors">Request</Link>
+                                    <>
+                                        <Link href="/request" className="text-[11px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 transition-colors">Request</Link>
+                                        <Link href="/review" className="text-[11px] font-black uppercase tracking-widest text-pink-400 hover:text-pink-300 transition-colors">Review</Link>
+                                    </>
                                 )}
                             </>
                         )}
