@@ -39,3 +39,7 @@ next-env.d.ts
 
 # Local Datasets (Content)
 /datasets/*.py
+
+# Scripts
+scripts/query_users.ts
+scripts/inspect_review_data.ts

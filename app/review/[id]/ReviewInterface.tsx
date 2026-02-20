@@ -55,12 +55,31 @@ export default function ReviewInterface({
             try {
                 const res = await fetch(`/api/datasets/${datasetId}/data?episode=${selectedEpisodeId}`);
                 if (!res.ok) throw new Error("Failed to load motion data");
-                const json = await res.json();
+                let json = await res.json();
+                console.log("Motion Data Received:", json);
+
+                // Handle nested episodes structure
+                if (json.episodes && Array.isArray(json.episodes) && json.episodes.length > 0) {
+                    console.log("Extracting episode from nested structure");
+                    const matchingEpisode = json.episodes.find((e: any) => e.episode_id === selectedEpisodeId) || json.episodes[0];
+                    if (matchingEpisode) {
+                        json = matchingEpisode;
+                    }
+                }
+
+                // Validate data structure
+                if (!json || !Array.isArray(json.joint_positions)) {
+                    console.error("Invalid data format:", json);
+                    alert("Received invalid motion data format");
+                    return;
+                }
+
                 setData(json);
                 setCurrentFrame(0);
                 setIsPlaying(false);
             } catch (e) {
-                console.error(e);
+                console.error("Fetch error:", e);
+                alert("Error loading motion data");
             } finally {
                 setLoading(false);
             }
@@ -78,7 +97,7 @@ export default function ReviewInterface({
                 const msPerFrame = 1000 / (data.fps || 30); // Default to 30fps if missing
 
                 if (accumulatorRef.current >= msPerFrame) {
-                    const framesToAdvance = Math.floor(accumulatorRef.current / msPerFrame);
+                    const framesToAdvance = Math.max(1, Math.floor(accumulatorRef.current / msPerFrame));
                     accumulatorRef.current %= msPerFrame;
 
                     setCurrentFrame(prev => {
@@ -241,7 +260,7 @@ export default function ReviewInterface({
                         <div className="absolute inset-0 bg-white/10 rounded-full" />
                         <div
                             className="absolute h-full bg-purple-500 rounded-full transition-all duration-75"
-                            style={{ width: `${(currentFrame / ((data?.joint_positions?.length || 1) - 1)) * 100}%` }}
+                            style={{ width: `${(currentFrame / (Math.max((data?.joint_positions?.length || 1) - 1, 1))) * 100}%` }}
                         />
                         <input
                             type="range"
