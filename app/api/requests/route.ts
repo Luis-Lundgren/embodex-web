@@ -43,10 +43,31 @@ export async function POST(req: Request) {
 
         // If this is a submission answering a job, update the original job status
         if (type === 'submission' && payload?.jobId) {
-            await prisma.request.update({
-                where: { id: payload.jobId },
-                data: { status: 'in_review' }
-            }).catch(e => console.error("Failed to update parent job status:", e));
+            try {
+                const originalJob = await prisma.request.update({
+                    where: { id: payload.jobId },
+                    data: { status: 'in_review' }
+                });
+
+                // Find the lab user who created the original job
+                const labUser = await prisma.user.findUnique({
+                    where: { email: originalJob.email }
+                });
+
+                if (labUser) {
+                    const sessionName = payload.title || payload.sessionId || 'Unknown Session';
+                    await prisma.notification.create({
+                        data: {
+                            userId: labUser.id,
+                            type: 'NEW_SUBMISSION',
+                            message: `A teleoperator submitted a trajectory for your job "${sessionName}".`,
+                            link: `/review/${request.id}`
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to update parent job status or send lab notification:", e);
+            }
         }
 
         return NextResponse.json(request);

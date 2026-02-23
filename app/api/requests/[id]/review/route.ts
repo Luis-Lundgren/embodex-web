@@ -51,6 +51,27 @@ export async function POST(
             console.error("Failed to parse payload or update dataset status", e);
         }
 
+        // Create Notification for the user who submitted the request
+        try {
+            const submitter = await prisma.user.findUnique({
+                where: { email: updatedRequest.email }
+            });
+            if (submitter) {
+                const payload = JSON.parse(updatedRequest.payload);
+                const sessionName = payload.title || payload.sessionId || 'Unknown Session';
+                await prisma.notification.create({
+                    data: {
+                        userId: submitter.id,
+                        type: status === 'APPROVED' ? 'SUBMISSION_APPROVED' : 'SUBMISSION_REJECTED',
+                        message: `Your submission "${sessionName}" has been ${status.toLowerCase()}.`,
+                        link: '/submissions'
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Failed to create notification", e);
+        }
+
         return NextResponse.json({
             success: true,
             request: updatedRequest,

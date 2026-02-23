@@ -1,11 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x", "windows"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -20,11 +20,11 @@ model Dataset {
   localPath   String?
   status      String?  @default("DRAFT")
   createdAt   DateTime @default(now())
-  
-  ownerId     String?
-  owner       User?    @relation("UserDatasets", fields: [ownerId], references: [id])
-  
-  episodes    Episode[]
+
+  ownerId String?
+  owner   User?   @relation("UserDatasets", fields: [ownerId], references: [id])
+
+  episodes Episode[]
 }
 
 model Episode {
@@ -48,18 +48,18 @@ model Request {
 
 // NextAuth Models
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -83,15 +83,16 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  
+
   // Custom Relations
   roles               UserRole[]
   teleoperatorProfile TeleoperatorProfile?
   labProfile          LabProfile?
-  datasets            Dataset[] @relation("UserDatasets")
-  
+  datasets            Dataset[]            @relation("UserDatasets")
+
   // Existing system needs (optional, can link these later if needed)
-  createdAt DateTime @default(now())
+  createdAt     DateTime       @default(now())
+  notifications Notification[]
 }
 
 model VerificationToken {
@@ -129,4 +130,15 @@ model LabProfile {
   orgSize   String?
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // e.g., "SUBMISSION_APPROVED", "SUBMISSION_REJECTED"
+  message   String
+  read      Boolean  @default(false)
+  link      String? // Optional link to related resource
+  createdAt DateTime @default(now())
 }

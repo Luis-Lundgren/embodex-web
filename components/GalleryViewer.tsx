@@ -4,6 +4,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSession, signOut } from "next-auth/react";
 import { GalleryItem } from './GalleryItem';
+import NotificationBell from './NotificationBell';
 const ViewerScene = dynamic(() => import('./ViewerScene'), { ssr: false });
 
 interface GalleryViewerProps {
@@ -137,6 +138,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                                         Sign Out
                                     </button>
                                 </div>
+                                <NotificationBell />
                                 <Link href="/settings/account" className="w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center overflow-hidden hover:border-blue-500 transition-colors">
                                     {session.user?.image ? (
                                         <img
