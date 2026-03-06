@@ -89,6 +89,8 @@ model User {
   teleoperatorProfile TeleoperatorProfile?
   labProfile          LabProfile?
   datasets            Dataset[]            @relation("UserDatasets")
+  payments            Payment[]            @relation("UserPayments")
+  earningsLedger      EarningsLedger[]     @relation("UserLedger")
 
   // Existing system needs (optional, can link these later if needed)
   createdAt     DateTime       @default(now())
@@ -141,4 +143,34 @@ model Notification {
   read      Boolean  @default(false)
   link      String? // Optional link to related resource
   createdAt DateTime @default(now())
+}
+
+model Payment {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation("UserPayments", fields: [userId], references: [id])
+  role            String   // "lab" | "teleoperator"
+  type            String   // "purchase" | "request_funding" | "payout"
+  amountCents     Int
+  currency        String   @default("USD")
+  status          String   // "pending" | "succeeded" | "failed" | "processing" | "paid"
+  method          String   // "mock_card" | "mock_ach" | "mock_invoice" | "mock_paypal" | "mock_bank"
+  referenceType   String?  // "dataset" | "job_request" | "payout_request"
+  referenceId     String?
+  transactionId   String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EarningsLedger {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation("UserLedger", fields: [userId], references: [id])
+  amountCents     Int
+  type            String   // "credit" (earning) | "debit" (payout)
+  status          String   @default("completed") // "completed" | "pending_payout" 
+  description     String?
+  referenceType   String?  // "dataset" | "job_request" | "payout_request"
+  referenceId     String?
+  createdAt       DateTime @default(now())
 }

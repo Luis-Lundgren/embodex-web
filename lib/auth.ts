@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 // Verify Captcha for Login
-                if (process.env.RECAPTCHA_SECRET_KEY || process.env.GOOGLE_CLOUD_PROJECT_ID) {
+                if (process.env.RECAPTCHA_CLIENT_EMAIL && (process.env.RECAPTCHA_SECRET_KEY || process.env.GOOGLE_CLOUD_PROJECT_ID)) {
                     const { createAssessment } = await import("./recaptcha");
                     const captchaToken = (credentials as any).captchaToken;
                     const score = await createAssessment({

@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, XCircle, AlertTriangle, Play, Pause, RotateCcw, SkipForward, SkipBack } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, AlertTriangle, Play, Pause, RotateCcw, SkipForward, SkipBack, DollarSign } from 'lucide-react';
+import MockCheckoutModal from '@/components/mock-checkout/MockCheckoutModal';
 
 const ViewerScene = dynamic(() => import('@/components/ViewerScene'), { ssr: false });
 
@@ -32,6 +33,7 @@ export default function ReviewInterface({
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(initialStatus);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
 
     // Episode selection
     const [selectedEpisodeId, setSelectedEpisodeId] = useState<string>(episodes[0]?.id || '');
@@ -200,6 +202,14 @@ export default function ReviewInterface({
                         </button>
                         <div className="w-px h-5 md:h-6 bg-white/10 mx-1" />
                         <button
+                            onClick={() => setCheckoutOpen(true)}
+                            className="px-3 md:px-4 py-1.5 md:py-2 rounded-md text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+                        >
+                            <DollarSign size={12} className="md:w-3.5 md:h-3.5" />
+                            <span className="hidden xs:inline">Fund Bounty</span>
+                        </button>
+                        <div className="w-px h-5 md:h-6 bg-white/10 mx-1" />
+                        <button
                             onClick={() => handleAction('REJECTED')}
                             disabled={isSubmitting || status === 'REJECTED'}
                             className={`px-3 md:px-4 py-1.5 md:py-2 rounded-md text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${status === 'REJECTED'
@@ -240,59 +250,87 @@ export default function ReviewInterface({
                 </div>
             </div>
 
+            <MockCheckoutModal
+                isOpen={checkoutOpen}
+                onClose={() => setCheckoutOpen(false)}
+                amountCents={parseInt(requestPayload.budget || '100') > 0 ? parseInt(requestPayload.budget) * 100 : 5000}
+                referenceType="job_request"
+                referenceId={requestId}
+                itemName={`Bounty for: ${requestPayload.title || 'Job'}`}
+            />
+
             {/* Playback Controls */}
-            <div className="h-20 sm:h-16 shrink-0 bg-slate-900 border-t border-white/10 flex items-center px-4 md:px-6 gap-4 md:gap-6 z-20 pb-[env(safe-area-inset-bottom)]">
-                <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center text-white transition-all shadow-lg shadow-purple-900/20 active:scale-95"
-                >
-                    {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
-                </button>
-
-                <div className="flex-grow flex flex-col gap-1.5 min-w-0">
-                    <div className="flex justify-between text-[8px] md:text-[9px] font-mono text-slate-500 uppercase tracking-widest px-1">
-                        <span className="hidden sm:inline">Playback Progress</span>
-                        <span className="sm:hidden truncate">Progress</span>
-                        <span className="text-purple-400 font-bold">
-                            {currentFrame} <span className="opacity-40">/</span> {data?.joint_positions?.length || 0}
-                        </span>
+            <div className="glass p-4 md:p-6 border-t border-white/10 z-20 backdrop-blur-xl bg-black/40 pb-[env(safe-area-inset-bottom)] shrink-0">
+                <div className="flex flex-col gap-4 max-w-5xl mx-auto">
+                    {/* Scrubber row */}
+                    <div className="flex flex-col gap-1.5 w-full">
+                        <div className="flex justify-between text-[8px] md:text-[9px] font-mono text-slate-500 uppercase tracking-widest px-1">
+                            <span className="hidden sm:inline">Playback Progress</span>
+                            <span className="sm:hidden truncate">Progress</span>
+                            <span className="text-purple-400 font-bold">
+                                {currentFrame} <span className="opacity-40">/</span> {data?.joint_positions?.length || 0}
+                            </span>
+                        </div>
+                        <div className="relative h-1.5 group cursor-pointer w-full">
+                            <div className="absolute inset-0 bg-white/10 rounded-full" />
+                            <div
+                                className="absolute h-full bg-purple-500 rounded-full transition-all duration-75"
+                                style={{ width: `${(currentFrame / (Math.max((data?.joint_positions?.length || 1) - 1, 1))) * 100}%` }}
+                            />
+                            <input
+                                type="range"
+                                min="0"
+                                max={data?.joint_positions?.length ? data.joint_positions.length - 1 : 0}
+                                value={currentFrame}
+                                onChange={(e) => { setIsPlaying(false); setCurrentFrame(parseInt(e.target.value)); }}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            />
+                        </div>
                     </div>
-                    <div className="relative h-1.5 group cursor-pointer w-full">
-                        <div className="absolute inset-0 bg-white/10 rounded-full" />
-                        <div
-                            className="absolute h-full bg-purple-500 rounded-full transition-all duration-75"
-                            style={{ width: `${(currentFrame / (Math.max((data?.joint_positions?.length || 1) - 1, 1))) * 100}%` }}
-                        />
-                        <input
-                            type="range"
-                            min="0"
-                            max={data?.joint_positions?.length ? data.joint_positions.length - 1 : 0}
-                            value={currentFrame}
-                            onChange={(e) => { setIsPlaying(false); setCurrentFrame(parseInt(e.target.value)); }}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        />
-                    </div>
-                </div>
 
-                <div className="flex items-center gap-2 md:gap-4 border-l border-white/10 pl-4 md:pl-6 shrink-0">
-                    <button
-                        onClick={() => { setIsPlaying(false); setCurrentFrame(0); }}
-                        className="p-1.5 md:p-2 text-slate-500 hover:text-white transition-colors"
-                        title="Restart"
-                    >
-                        <RotateCcw size={16} />
-                    </button>
-                    <div className="flex items-center gap-1 md:gap-2">
-                        <span className="text-[8px] md:text-[9px] font-black text-slate-600 uppercase hidden xs:inline">Speed</span>
-                        <select
-                            value={playbackSpeed}
-                            onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
-                            className="bg-black/30 text-[9px] md:text-[10px] font-bold border border-white/10 rounded px-1.5 md:px-2 py-1 text-purple-400 outline-none hover:border-purple-500/50 transition-colors cursor-pointer"
-                        >
-                            <option value="0.5">0.5x</option>
-                            <option value="1">1.0x</option>
-                            <option value="2">2.0x</option>
-                        </select>
+                    {/* Buttons row */}
+                    <div className="flex justify-between items-center w-full">
+                        <div className="flex items-center gap-4 min-w-[80px]">
+                            {/* Placeholder for left-side metrics if needed */}
+                        </div>
+
+                        <div className="flex items-center gap-6">
+                            <button
+                                onClick={() => { setIsPlaying(false); setCurrentFrame(0); }}
+                                className="p-2 text-slate-500 hover:text-white transition-colors"
+                                title="Restart"
+                            >
+                                <RotateCcw size={18} />
+                            </button>
+
+                            <button
+                                onClick={() => setIsPlaying(!isPlaying)}
+                                className="w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center text-white transition-all shadow-lg shadow-purple-900/20 active:scale-95"
+                            >
+                                {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-0.5" />}
+                            </button>
+
+                            <button
+                                onClick={() => { setIsPlaying(false); setCurrentFrame(data?.joint_positions?.length ? data.joint_positions.length - 1 : 0); }}
+                                className="p-2 text-slate-500 hover:text-white transition-colors"
+                                title="Go to End"
+                            >
+                                <SkipForward size={18} />
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-3 min-w-[80px] justify-end">
+                            <span className="text-[10px] font-black text-white/30 tracking-widest uppercase hidden xs:inline">Speed</span>
+                            <select
+                                value={playbackSpeed}
+                                onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                                className="bg-black/30 text-[9px] md:text-[10px] font-bold border border-white/10 rounded px-1.5 md:px-2 py-1.5 text-purple-400 outline-none hover:border-purple-500/50 transition-colors cursor-pointer"
+                            >
+                                <option value="0.5">0.5x</option>
+                                <option value="1">1.0x</option>
+                                <option value="2">2.0x</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

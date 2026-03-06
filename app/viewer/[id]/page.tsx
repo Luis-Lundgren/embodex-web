@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
+import MockCheckoutModal from '@/components/mock-checkout/MockCheckoutModal';
 
 const ViewerScene = dynamic(() => import('@/components/ViewerScene'), { ssr: false });
 
@@ -18,6 +19,7 @@ export default function ViewerPage({ params }: { params: { id: string } }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentFrame, setCurrentFrame] = useState(0);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
 
     // Ref for animation loop
     const requestRef = useRef<number>();
@@ -148,6 +150,11 @@ export default function ViewerPage({ params }: { params: { id: string } }) {
                             TOTAL DURATION: {formatTime(data.joint_positions.length, data.fps)}
                         </div>
                     </div>
+                    {datasetMetadata?.isPremium && (
+                        <button onClick={() => setCheckoutOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-widest text-[10px] py-1.5 px-4 rounded border border-amber-400 transition-colors shadow-lg shadow-amber-500/20 mr-2">
+                            Purchase (${(datasetMetadata.price || 50).toFixed(2)})
+                        </button>
+                    )}
                     <button className="btn-primary text-[10px] py-1.5 px-4 shadow-none border border-white/10 hover:border-white/50 uppercase tracking-widest">
                         Export JSON
                     </button>
@@ -284,6 +291,15 @@ export default function ViewerPage({ params }: { params: { id: string } }) {
                     </div>
                 </div>
             </div>
+
+            <MockCheckoutModal
+                isOpen={checkoutOpen}
+                onClose={() => setCheckoutOpen(false)}
+                amountCents={Math.round((datasetMetadata?.price || 50) * 100)}
+                referenceType="dataset"
+                referenceId={datasetMetadata?.id}
+                itemName={datasetMetadata?.title || "Premium Dataset"}
+            />
         </div>
     );
 }
