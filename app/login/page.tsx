@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Script from "next/script";
 
 declare global {
@@ -21,6 +21,13 @@ export default function LoginPage() {
             )}
 
             <div className="relative z-10 w-full max-w-md">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors mb-6"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Home
+                </Link>
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-md shadow-2xl">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
