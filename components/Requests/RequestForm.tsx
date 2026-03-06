@@ -47,23 +47,23 @@ export default function RequestForm() {
 
     if (success) {
         return (
-            <div className="bg-slate-900/50 border border-blue-500/30 rounded-2xl p-12 text-center backdrop-blur-xl animate-in fade-in zoom-in duration-500">
-                <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(59,130,246,0.5)]">
-                    <Send className="text-white w-8 h-8" />
+            <div className="bg-slate-900/50 border border-blue-500/30 rounded-2xl p-8 md:p-12 text-center backdrop-blur-xl animate-in fade-in zoom-in duration-500">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(59,130,246,0.5)]">
+                    <Send className="text-white w-6 h-6 md:w-8 md:h-8" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Request Submitted!</h2>
-                <p className="text-slate-400">Our teleoperators will be notified of your request.</p>
-                <p className="text-slate-500 text-sm mt-4 italic">Redirecting you to the exchange...</p>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-2">Request Submitted!</h2>
+                <p className="text-slate-400 text-sm md:text-base">Our teleoperators will be notified of your request.</p>
+                <p className="text-slate-500 text-xs md:text-sm mt-4 italic">Redirecting to the exchange...</p>
             </div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 backdrop-blur-sm">
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b border-white/5">
-                    <ClipboardList className="text-purple-400 w-6 h-6" />
-                    <h2 className="text-xl font-bold text-white uppercase tracking-wider">New Teleoperation Request</h2>
+        <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+            <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5 md:p-8 backdrop-blur-sm">
+                <div className="flex items-center gap-3 mb-6 md:mb-8 pb-4 border-b border-white/5">
+                    <ClipboardList className="text-purple-400 w-5 h-5 md:w-6 md:h-6" />
+                    <h2 className="text-lg md:text-xl font-bold text-white uppercase tracking-wider">New Request</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -96,16 +96,16 @@ export default function RequestForm() {
                     </div>
 
                     <div>
-                        <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 font-mono">
+                        <label className="block text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 font-mono">
                             Budget Range (Optional)
                         </label>
                         <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-mono">$</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">$</span>
                             <input
                                 type="text"
                                 value={budget}
                                 onChange={(e) => setBudget(e.target.value)}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-4 py-4 text-white focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-700"
+                                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-4 py-3 md:py-4 text-white text-sm md:text-base focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-700"
                                 placeholder="e.g. 100-250"
                             />
                         </div>
@@ -123,9 +123,9 @@ export default function RequestForm() {
             <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                className="w-full py-4 md:py-5 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 rounded-2xl text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-purple-500/20 transition-all active:scale-[0.98] disabled:opacity-50 text-xs md:text-sm"
             >
-                {isSubmitting ? 'Posting Request...' : 'Post Request to Marketplace'}
+                {isSubmitting ? 'Posting Request...' : 'Post Request'}
             </button>
         </form>
     );

@@ -151,64 +151,64 @@ export default function ReviewInterface({
     const formatTime = (frame: number, fps: number) => (frame / fps).toFixed(2) + "s";
 
     return (
-        <div className="flex flex-col h-screen bg-slate-950 overflow-hidden text-gray-200">
+        <div className="fixed inset-0 flex flex-col bg-slate-950 overflow-hidden text-gray-200 z-0 h-screen h-[100dvh]">
             {/* Header */}
-            <header className="h-16 shrink-0 bg-slate-900 border-b border-white/10 flex items-center justify-between px-6 z-20 shadow-xl">
-                <div className="flex items-center gap-4">
+            <header className="h-auto md:h-16 shrink-0 bg-slate-900 border-b border-white/10 flex flex-col md:flex-row items-center justify-between p-4 md:px-6 z-20 shadow-xl gap-4">
+                <div className="flex items-center gap-4 w-full md:w-auto">
                     <Link href="/review" className="p-2 hover:bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors">
-                        <ArrowLeft size={20} />
+                        <ArrowLeft size={18} />
                     </Link>
-                    <div>
-                        <h1 className="text-sm font-black text-white uppercase tracking-widest">
+                    <div className="min-w-0">
+                        <h1 className="text-[11px] md:text-sm font-black text-white uppercase tracking-widest truncate">
                             {requestPayload.title || 'Untitled Session'}
                         </h1>
-                        <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
-                            <span>{submittedBy}</span>
+                        <div className="flex items-center gap-2 text-[9px] md:text-[10px] text-slate-500 font-mono">
+                            <span className="truncate max-w-[100px] md:max-w-none">{submittedBy}</span>
                             <span>•</span>
-                            <span>{new Date(submittedAt).toLocaleString()}</span>
+                            <span className="shrink-0">{new Date(submittedAt).toLocaleDateString()}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Episode:</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">Episode:</span>
                         <select
                             value={selectedEpisodeId}
                             onChange={(e) => setSelectedEpisodeId(e.target.value)}
-                            className="bg-black/40 text-[10px] font-bold border border-white/10 rounded px-2 py-1.5 text-slate-300 outline-none hover:border-white/30 transition-colors cursor-pointer min-w-[100px]"
+                            className="bg-black/40 text-[10px] font-bold border border-white/10 rounded px-2 py-1.5 text-slate-300 outline-none hover:border-white/30 transition-colors cursor-pointer min-w-[80px]"
                         >
                             {episodes.map((ep: any) => (
                                 <option key={ep.id} value={ep.id}>
-                                    {ep.id} ({(ep.duration || 0).toFixed(1)}s)
+                                    {ep.id.substring(0, 8)}... ({(ep.duration || 0).toFixed(1)}s)
                                 </option>
                             ))}
                         </select>
                     </div>
 
-                    <div className="flex items-center bg-black/40 rounded-lg p-1 border border-white/5">
+                    <div className="flex items-center bg-black/40 rounded-lg p-1 border border-white/5 shrink-0">
                         <button
                             onClick={() => handleAction('APPROVED')}
                             disabled={isSubmitting || status === 'APPROVED'}
-                            className={`px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${status === 'APPROVED'
+                            className={`px-3 md:px-4 py-1.5 md:py-2 rounded-md text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${status === 'APPROVED'
                                 ? 'bg-emerald-500/20 text-emerald-400 cursor-default'
                                 : 'hover:bg-emerald-500/20 hover:text-emerald-400 text-slate-400'
                                 }`}
                         >
-                            <CheckCircle size={14} />
-                            Approve
+                            <CheckCircle size={12} className="md:w-3.5 md:h-3.5" />
+                            <span className="hidden xs:inline">Approve</span>
                         </button>
-                        <div className="w-px h-6 bg-white/10 mx-1" />
+                        <div className="w-px h-5 md:h-6 bg-white/10 mx-1" />
                         <button
                             onClick={() => handleAction('REJECTED')}
                             disabled={isSubmitting || status === 'REJECTED'}
-                            className={`px-4 py-2 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${status === 'REJECTED'
+                            className={`px-3 md:px-4 py-1.5 md:py-2 rounded-md text-[9px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${status === 'REJECTED'
                                 ? 'bg-red-500/20 text-red-400 cursor-default'
                                 : 'hover:bg-red-500/20 hover:text-red-400 text-slate-400'
                                 }`}
                         >
-                            <XCircle size={14} />
-                            Reject
+                            <XCircle size={12} className="md:w-3.5 md:h-3.5" />
+                            <span className="hidden xs:inline">Reject</span>
                         </button>
                     </div>
                 </div>
@@ -227,13 +227,13 @@ export default function ReviewInterface({
 
                     {/* Status Overlay */}
                     <div className="absolute top-4 right-4 pointer-events-none">
-                        <div className={`px-4 py-2 rounded-xl border backdrop-blur-md flex items-center gap-2 text-xs font-bold uppercase tracking-widest shadow-lg ${status === 'APPROVED' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                        <div className={`px-3 md:px-4 py-1.5 md:py-2 rounded-xl border backdrop-blur-md flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-lg ${status === 'APPROVED' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
                             status === 'REJECTED' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
                                 'bg-blue-500/10 border-blue-500/20 text-blue-400'
                             }`}>
-                            {status === 'APPROVED' && <CheckCircle size={16} />}
-                            {status === 'REJECTED' && <XCircle size={16} />}
-                            {!status || status === 'PENDING' ? <AlertTriangle size={16} /> : null}
+                            {status === 'APPROVED' && <CheckCircle size={14} className="md:w-4 md:h-4" />}
+                            {status === 'REJECTED' && <XCircle size={14} className="md:w-4 md:h-4" />}
+                            {!status || status === 'PENDING' ? <AlertTriangle size={14} className="md:w-4 md:h-4" /> : null}
                             {status || 'PENDING'}
                         </div>
                     </div>
@@ -241,19 +241,20 @@ export default function ReviewInterface({
             </div>
 
             {/* Playback Controls */}
-            <div className="h-16 shrink-0 bg-slate-900 border-t border-white/10 flex items-center px-6 gap-6 z-20">
+            <div className="h-20 sm:h-16 shrink-0 bg-slate-900 border-t border-white/10 flex items-center px-4 md:px-6 gap-4 md:gap-6 z-20 pb-[env(safe-area-inset-bottom)]">
                 <button
                     onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-10 h-10 shrink-0 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center text-white transition-all shadow-lg shadow-purple-900/20 active:scale-95"
+                    className="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-full bg-purple-600 hover:bg-purple-500 flex items-center justify-center text-white transition-all shadow-lg shadow-purple-900/20 active:scale-95"
                 >
                     {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
                 </button>
 
-                <div className="flex-grow flex flex-col gap-1.5">
-                    <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase tracking-widest px-1">
-                        <span>Playback Progress</span>
-                        <span className="text-purple-400">
-                            {currentFrame} / {data?.joint_positions?.length || 0} ({data?.fps ? formatTime(currentFrame, data.fps) : '0.00s'})
+                <div className="flex-grow flex flex-col gap-1.5 min-w-0">
+                    <div className="flex justify-between text-[8px] md:text-[9px] font-mono text-slate-500 uppercase tracking-widest px-1">
+                        <span className="hidden sm:inline">Playback Progress</span>
+                        <span className="sm:hidden truncate">Progress</span>
+                        <span className="text-purple-400 font-bold">
+                            {currentFrame} <span className="opacity-40">/</span> {data?.joint_positions?.length || 0}
                         </span>
                     </div>
                     <div className="relative h-1.5 group cursor-pointer w-full">
@@ -273,25 +274,23 @@ export default function ReviewInterface({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+                <div className="flex items-center gap-2 md:gap-4 border-l border-white/10 pl-4 md:pl-6 shrink-0">
                     <button
                         onClick={() => { setIsPlaying(false); setCurrentFrame(0); }}
-                        className="p-2 text-slate-500 hover:text-white transition-colors"
+                        className="p-1.5 md:p-2 text-slate-500 hover:text-white transition-colors"
                         title="Restart"
                     >
                         <RotateCcw size={16} />
                     </button>
-                    <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-black text-slate-600 uppercase">Speed</span>
+                    <div className="flex items-center gap-1 md:gap-2">
+                        <span className="text-[8px] md:text-[9px] font-black text-slate-600 uppercase hidden xs:inline">Speed</span>
                         <select
                             value={playbackSpeed}
                             onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
-                            className="bg-black/30 text-[10px] font-bold border border-white/10 rounded px-2 py-1 text-purple-400 outline-none hover:border-purple-500/50 transition-colors cursor-pointer"
+                            className="bg-black/30 text-[9px] md:text-[10px] font-bold border border-white/10 rounded px-1.5 md:px-2 py-1 text-purple-400 outline-none hover:border-purple-500/50 transition-colors cursor-pointer"
                         >
-                            <option value="0.25">0.25x</option>
                             <option value="0.5">0.5x</option>
                             <option value="1">1.0x</option>
-                            <option value="1.5">1.5x</option>
                             <option value="2">2.0x</option>
                         </select>
                     </div>

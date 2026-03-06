@@ -128,7 +128,7 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
 
     return (
         <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-2 md:p-4">
-            <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[90vh] md:h-[80vh]">
+            <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[90dvh] md:h-[80vh]">
                 <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                     <div>
                         <h2 className="text-lg md:text-xl font-bold text-white tracking-tight truncate max-w-[200px] md:max-w-none">Review Session</h2>

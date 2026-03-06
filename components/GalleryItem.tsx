@@ -53,10 +53,16 @@ export function GalleryItem({ dataset: d, isActive, onClick }: GalleryItemProps)
                     </div>
                 )}
 
-                {d.isPremium && (
+                {d.isPremium ? (
                     <div className="absolute top-2 right-2">
                         <div className="bg-[#ff9d00] text-black text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase">
                             ${d.price}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="absolute top-2 right-2">
+                        <div className="bg-blue-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase">
+                            Free
                         </div>
                     </div>
                 )}

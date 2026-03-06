@@ -20,7 +20,7 @@ export default function RootLayout({
             <head>
                 <script src="/trusted-types.js"></script>
             </head>
-            <body className={`${inter.className} h-full overflow-hidden bg-slate-950 text-gray-200`}>
+            <body className={`${inter.className} min-h-screen bg-slate-950 text-gray-200 antialiased`}>
                 <Providers>
                     {children}
                 </Providers>

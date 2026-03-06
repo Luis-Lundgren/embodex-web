@@ -30,22 +30,22 @@ export default async function ReviewPage() {
     });
 
     return (
-        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(168,85,247,0.05),transparent_50%)] p-6 md:p-12">
+        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(168,85,247,0.05),transparent_50%)] p-4 md:p-12">
             <div className="max-w-6xl mx-auto">
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-12 text-sm font-mono uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 md:mb-12 text-xs md:text-sm font-mono uppercase tracking-widest"
                 >
                     <ArrowLeft size={16} />
-                    Back to Exchange
+                    <span>Back to Exchange</span>
                 </Link>
 
-                <div className="flex justify-between items-end mb-12">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-6 mb-8 md:mb-12">
                     <div>
-                        <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-200 tracking-tighter mb-4">
-                            SUBMISSION REVIEW
+                        <h1 className="text-2xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-200 tracking-tighter mb-2 md:mb-4 uppercase leading-none">
+                            Submission Review
                         </h1>
-                        <p className="text-slate-400 text-lg max-w-2xl font-medium">
+                        <p className="text-slate-400 text-xs md:text-lg max-w-2xl font-medium leading-relaxed opacity-80">
                             Review and approve teleoperation data submissions from the community.
                         </p>
                     </div>
@@ -61,7 +61,7 @@ export default async function ReviewPage() {
                     </div>
                 ) : (
                     <div className="grid gap-4">
-                        <div className="grid grid-cols-12 gap-4 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800">
+                        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 border-b border-slate-800">
                             <div className="col-span-4">Submission</div>
                             <div className="col-span-3">Submitted By</div>
                             <div className="col-span-2">Date</div>
@@ -78,34 +78,35 @@ export default async function ReviewPage() {
                                 <Link
                                     key={sub.id}
                                     href={`/review/${sub.id}`}
-                                    className="grid grid-cols-12 gap-4 items-center bg-slate-900/40 border border-slate-800 hover:border-purple-500/30 hover:bg-slate-900/60 rounded-xl p-4 transition-all duration-200 group"
+                                    className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 items-start md:items-center bg-slate-900/40 border border-slate-800 hover:border-purple-500/30 hover:bg-slate-900/60 rounded-xl p-4 md:p-4 transition-all duration-200 group relative"
                                 >
-                                    <div className="col-span-4">
-                                        <div className="font-bold text-white group-hover:text-purple-400 transition-colors truncate">
-                                            {payload.title || `Session ${payload.sessionId}`}
+                                    <div className="md:col-span-4 w-full">
+                                        <div className="font-bold text-white group-hover:text-purple-400 transition-colors text-sm line-clamp-2 leading-snug">
+                                            {payload.title || `Submission for Job ${payload.jobId || sub.id}`}
                                         </div>
-                                        <div className="text-[10px] text-slate-500 font-mono mt-1 truncate">
-                                            ID: {payload.sessionId}
+                                        <div className="text-[9px] text-slate-500 font-mono mt-1 break-all uppercase tracking-tighter opacity-60">
+                                            ID: {payload.sessionId || sub.id}
                                         </div>
                                     </div>
-                                    <div className="col-span-3 text-sm text-slate-400 truncate">
-                                        {sub.email}
+                                    <div className="md:col-span-3 text-[10px] md:text-sm text-slate-400 w-full flex items-start gap-2">
+                                        <span className="md:hidden text-slate-600 uppercase text-[8px] font-black shrink-0 mt-0.5">By:</span>
+                                        <span className="break-all leading-tight">{sub.email}</span>
                                     </div>
-                                    <div className="col-span-2 flex items-center gap-2 text-[11px] font-mono text-slate-500">
-                                        <Clock size={12} />
-                                        {new Date(sub.createdAt).toLocaleDateString()}
+                                    <div className="md:col-span-2 flex items-center gap-2 text-[10px] md:text-[11px] font-mono text-slate-500">
+                                        <Clock size={10} className="md:w-3.5 md:h-3.5 shrink-0" />
+                                        <span>{new Date(sub.createdAt).toLocaleDateString()}</span>
                                     </div>
-                                    <div className="col-span-2">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-950 border border-slate-800 ${statusColor}`}>
+                                    <div className="md:col-span-2">
+                                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-wider bg-slate-950 border border-slate-800 ${statusColor}`}>
                                             {sub.status === 'APPROVED' && <CheckCircle2 size={10} />}
                                             {sub.status === 'REJECTED' && <XCircle size={10} />}
                                             {(!sub.status || sub.status === 'PENDING') && <AlertCircle size={10} />}
                                             {sub.status || 'PENDING'}
                                         </span>
                                     </div>
-                                    <div className="col-span-1 text-right">
-                                        <span className="text-[10px] font-bold text-slate-600 group-hover:text-purple-400 transition-colors uppercase tracking-widest">
-                                            Review &rarr;
+                                    <div className="md:col-span-1 text-right w-full md:w-auto hidden md:block">
+                                        <span className="text-[10px] font-bold text-slate-600 group-hover:text-purple-400 transition-colors uppercase tracking-widest flex items-center justify-end gap-1">
+                                            Review <ArrowLeft size={10} className="rotate-180" />
                                         </span>
                                     </div>
                                 </Link>

@@ -96,7 +96,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
     const currentJoints = data?.joint_positions?.[currentFrame] || [0, 0, 0, 0, 0, 0];
 
     return (
-        <div className="flex flex-col h-screen bg-slate-950 overflow-hidden font-sans text-gray-200">
+        <div className="fixed inset-0 flex flex-col bg-slate-950 overflow-hidden font-sans text-gray-200 z-0 h-screen h-[100dvh]">
             {/* Professional Top Header */}
             <header className="h-14 shrink-0 border-b border-white/5 flex items-center justify-between px-4 md:px-6 bg-slate-900 shadow-2xl z-40 relative">
                 <div className="flex items-center gap-3">
@@ -277,7 +277,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                 </div>
 
                 {/* Main Visualizer Area (Center) */}
-                <div className="flex-grow flex flex-col bg-black min-w-0 h-full relative">
+                <div className="flex-grow flex flex-col bg-black min-w-0 relative pb-16 md:pb-0">
                     <div className="flex-grow relative overflow-hidden">
                         {loading && (
                             <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-50 flex items-center justify-center">
@@ -296,25 +296,27 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                     </div>
 
                     {/* Playback Controls Bar (Always In Frame) */}
-                    <div className="h-20 shrink-0 bg-slate-900 border-t border-white/5 flex items-center px-4 md:px-6 gap-3 md:gap-6 z-20">
+                    <div className="h-16 md:h-20 shrink-0 bg-slate-900 border-t border-white/5 flex items-center px-4 md:px-6 gap-2 md:gap-6 z-50 pb-[env(safe-area-inset-bottom)] fixed bottom-0 left-0 right-0 md:relative md:bottom-auto">
                         <button
                             onClick={() => setIsPlaying(!isPlaying)}
-                            className="w-10 h-10 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 flex items-center justify-center text-white transition-all shadow-lg active:scale-95"
+                            className="w-8 h-8 md:w-10 md:h-10 shrink-0 rounded-full bg-blue-600 hover:bg-blue-500 flex items-center justify-center text-white transition-all shadow-lg active:scale-95"
                         >
                             {isPlaying ? (
-                                <Pause size={18} fill="currentColor" />
+                                <Pause size={14} className="md:w-[18px] md:h-[18px]" fill="currentColor" />
                             ) : (
-                                <Play size={18} fill="currentColor" className="ml-1" />
+                                <Play size={14} className="md:w-[18px] md:h-[18px] ml-1" fill="currentColor" />
                             )}
                         </button>
 
-                        <div className="flex-grow flex flex-col gap-2">
-                            <div className="flex justify-between text-[8px] md:text-[9px] font-mono text-white/30 uppercase tracking-widest px-1">
+                        <div className="flex-grow flex flex-col gap-1 md:gap-2 min-w-0">
+                            <div className="flex justify-between text-[7px] md:text-[9px] font-mono text-white/30 uppercase tracking-widest px-1">
                                 <span className="hidden sm:inline">Frame Progression</span>
                                 <span className="sm:hidden">Progress</span>
-                                <span className="text-blue-400">{currentFrame} / {data?.joint_positions.length || 0}</span>
+                                <span className="text-blue-400">
+                                    {currentFrame} <span className="opacity-40">/</span> {data?.joint_positions.length || 0}
+                                </span>
                             </div>
-                            <div className="relative h-1.5 group cursor-pointer">
+                            <div className="relative h-1 md:h-1.5 group cursor-pointer">
                                 <div className="absolute inset-0 bg-white/5 rounded-full" />
                                 <div className="absolute h-full bg-blue-600 rounded-full" style={{ width: `${(currentFrame / (data?.joint_positions.length || 1)) * 100}%` }} />
                                 <input
@@ -327,10 +329,12 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
 
                         <select
                             value={selectedEpisodeId} onChange={(e) => setSelectedEpisodeId(e.target.value)}
-                            className="bg-white/5 border border-white/10 rounded-lg px-2 md:px-4 py-2 text-[9px] md:text-[10px] font-black text-white/50 outline-none cursor-pointer uppercase hover:text-white transition-all min-w-[80px] md:min-w-[120px]"
+                            className="bg-white/5 border border-white/10 rounded-lg px-2 md:px-4 py-1.5 md:py-2 text-[8px] md:text-[10px] font-black text-white/50 outline-none cursor-pointer uppercase hover:text-white transition-all max-w-[70px] md:max-w-none md:min-w-[120px]"
                         >
                             {selectedDataset?.episodes?.map((ep: any) => (
-                                <option key={ep.id} value={ep.id} className="bg-slate-900 text-white">{ep.id}</option>
+                                <option key={ep.id} value={ep.id} className="bg-slate-900 text-white">
+                                    {ep.id.replace('episode_', 'EP ')}
+                                </option>
                             ))}
                         </select>
                     </div>

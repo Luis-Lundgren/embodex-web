@@ -150,7 +150,7 @@ function TeleopContent() {
     }, [sendAction]);
 
     return (
-        <main className="w-full h-screen bg-black overflow-hidden relative">
+        <main className="fixed inset-0 h-screen h-[100dvh] bg-black overflow-hidden relative z-0">
             {detecting && (
                 <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[200] bg-blue-600 text-white px-6 py-3 rounded-full font-bold animate-pulse shadow-2xl flex items-center gap-3">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -30,34 +30,34 @@ export default async function SubmissionsPage() {
     });
 
     return (
-        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.05),transparent_50%)] p-6 md:p-12">
+        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.05),transparent_50%)] p-4 md:p-12">
             <div className="max-w-5xl mx-auto">
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-12 text-sm font-mono uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 md:mb-12 text-xs md:text-sm font-mono uppercase tracking-widest"
                 >
                     <ArrowLeft size={16} />
-                    Back to Exchange
+                    <span>Back to Exchange</span>
                 </Link>
 
-                <div className="flex justify-between items-end mb-12">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 md:mb-12">
                     <div>
-                        <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-200 tracking-tighter mb-4">
-                            YOUR SUBMISSIONS
+                        <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-200 tracking-tighter mb-4 uppercase">
+                            Your Submissions
                         </h1>
-                        <p className="text-slate-400 text-lg max-w-2xl font-medium">
+                        <p className="text-slate-400 text-sm md:text-lg max-w-2xl font-medium leading-relaxed">
                             Track the trajectories you've recorded and submitted to the marketplace.
                         </p>
                     </div>
-                    <div className="flex items-center gap-4 mb-2">
+                    <div className="flex items-center gap-4">
                         <NotificationBell />
                     </div>
                 </div>
 
                 {submissions.length === 0 ? (
-                    <div className="bg-slate-900/30 border border-slate-800 rounded-3xl p-20 text-center backdrop-blur-sm">
-                        <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                            <Send className="text-slate-600 w-8 h-8" />
+                    <div className="bg-slate-900/30 border border-slate-800 rounded-3xl p-10 md:p-20 text-center backdrop-blur-sm">
+                        <div className="w-12 h-12 md:w-16 md:h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <Send className="text-slate-600 w-6 h-6 md:w-8 md:h-8" />
                         </div>
                         <h2 className="text-xl font-bold text-white mb-2">No submissions yet</h2>
                         <p className="text-slate-500">Go to the Jobs board to find tasks and start teleoperating!</p>
@@ -88,7 +88,7 @@ export default async function SubmissionsPage() {
                             return (
                                 <div
                                     key={sub.id}
-                                    className={`group relative bg-slate-900/50 border hover:border-blue-500/30 rounded-2xl p-6 transition-all duration-300 backdrop-blur-sm ${status === 'REJECTED' ? 'border-red-500/10' : 'border-slate-800'}`}
+                                    className={`group relative bg-slate-900/50 border hover:border-blue-500/30 rounded-2xl p-5 md:p-6 transition-all duration-300 backdrop-blur-sm ${status === 'REJECTED' ? 'border-red-500/10' : 'border-slate-800'}`}
                                 >
                                     <div className="flex flex-col md:flex-row md:items-center gap-8">
                                         <div className="flex-grow">
@@ -133,12 +133,12 @@ export default async function SubmissionsPage() {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center gap-4 shrink-0">
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${status === 'APPROVED' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-500' :
-                                                    status === 'REJECTED' ? 'bg-red-500/10 border border-red-500/20 text-red-500' :
-                                                        'bg-blue-500/10 border border-blue-500/20 text-blue-500'
+                                        <div className="flex items-center gap-4 shrink-0 md:bg-black/20 md:p-4 rounded-xl">
+                                            <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center ${status === 'APPROVED' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-500' :
+                                                status === 'REJECTED' ? 'bg-red-500/10 border border-red-500/20 text-red-500' :
+                                                    'bg-blue-500/10 border border-blue-500/20 text-blue-500'
                                                 }`}>
-                                                <StatusIcon size={24} />
+                                                <StatusIcon size={20} className="md:w-6 md:h-6" />
                                             </div>
                                         </div>
                                     </div>

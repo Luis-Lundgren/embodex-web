@@ -18,21 +18,21 @@ export default async function RequestPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(168,85,247,0.08),transparent_50%)] p-6 md:p-12">
+        <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(168,85,247,0.08),transparent_50%)] p-4 md:p-12">
             <div className="max-w-3xl mx-auto">
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-12 text-sm font-mono uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 md:mb-12 text-xs md:text-sm font-mono uppercase tracking-widest"
                 >
                     <ArrowLeft size={16} />
-                    Back to Exchange
+                    <span>Back to Exchange</span>
                 </Link>
 
-                <div className="mb-12">
-                    <h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-500 tracking-tighter mb-4">
-                        REQUEST TELEOPERATION
+                <div className="mb-8 md:mb-12">
+                    <h1 className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-500 tracking-tighter mb-4 uppercase">
+                        Request Teleoperation
                     </h1>
-                    <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">
+                    <p className="text-slate-400 text-sm md:text-lg leading-relaxed max-w-2xl font-medium">
                         Can't find the data you need? Post a request for custom teleoperations and our global network of operators will provide high-quality trajectories.
                     </p>
                 </div>
