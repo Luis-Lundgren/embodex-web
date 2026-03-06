@@ -20,7 +20,7 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, connect
     // Browser usually hides DOM in VR anyway
 
     return (
-        <div className={`absolute top-4 left-4 z-10 flex flex-col gap-4 p-4 bg-gray-900/80 backdrop-blur-md rounded-xl text-white border border-gray-700 w-80 ${className}`}>
+        <div className={`absolute top-2 left-2 right-2 md:top-4 md:left-4 md:right-auto z-10 flex flex-col gap-3 md:gap-4 p-4 bg-gray-900/80 backdrop-blur-md rounded-xl text-white border border-gray-700 w-auto md:w-80 ${className}`}>
             <div className="flex justify-between items-start">
                 <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                     Teleop Suite

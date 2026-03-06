@@ -127,12 +127,12 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
     };
 
     return (
-        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[80vh]">
-                <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
+        <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-2 md:p-4">
+            <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[90vh] md:h-[80vh]">
+                <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                     <div>
-                        <h2 className="text-xl font-bold text-white tracking-tight">Review Session: {sessionId}</h2>
-                        {jobId && <p className="text-emerald-400 text-xs font-mono uppercase mt-1">Responding to Job #{jobId}</p>}
+                        <h2 className="text-lg md:text-xl font-bold text-white tracking-tight truncate max-w-[200px] md:max-w-none">Review Session</h2>
+                        {jobId && <p className="text-emerald-400 text-[10px] font-mono uppercase mt-0.5">Job #{jobId}</p>}
                     </div>
                     <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
                         <X size={24} />
@@ -168,32 +168,32 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                     </div>
                 </div>
 
-                <div className="p-8 border-t border-white/5 bg-slate-900 flex justify-between items-center">
-                    <div className="text-slate-400 text-sm max-w-md leading-relaxed">
-                        Verify the trajectory alignment and motion smoothness before submitting to the customer.
+                <div className="p-4 md:p-8 border-t border-white/5 bg-slate-900 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="text-slate-400 text-[11px] md:text-sm max-w-md leading-relaxed text-center md:text-left">
+                        Verify the trajectory alignment before submitting.
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex w-full md:w-auto gap-3 md:gap-4">
                         <button
                             disabled={submitting || submitted}
                             onClick={onClose}
-                            className="px-6 py-3 text-white/50 hover:text-white text-sm font-bold uppercase tracking-widest transition-colors"
+                            className="flex-1 md:flex-none px-4 md:px-6 py-2 md:py-3 text-white/50 hover:text-white text-[11px] md:text-sm font-bold uppercase tracking-widest transition-colors border border-white/10 rounded-xl"
                         >
                             Discard
                         </button>
                         <button
                             disabled={submitting || submitted || !data}
                             onClick={handleSubmit}
-                            className={`px-8 py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 ${submitted
+                            className={`flex-[2] md:flex-none px-4 md:px-8 py-2 md:py-3 rounded-xl font-black text-[11px] md:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${submitted
                                 ? 'bg-emerald-500 text-white shadow-emerald-500/20'
                                 : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20 active:scale-95'
                                 }`}
                         >
                             {submitted ? (
-                                <><CheckCircle2 size={18} /> Submitted!</>
+                                <><CheckCircle2 size={16} /> Submitted!</>
                             ) : submitting ? (
                                 'Uploading...'
                             ) : (
-                                <><Send size={18} /> Submit Recording</>
+                                <><Send size={16} /> Submit</>
                             )}
                         </button>
                     </div>
