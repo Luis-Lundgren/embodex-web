@@ -84,6 +84,8 @@ export default function NotificationBell() {
         switch (type) {
             case 'SUBMISSION_APPROVED': return <CheckCircle2 className="text-emerald-500" size={16} />;
             case 'SUBMISSION_REJECTED': return <XCircle className="text-red-500" size={16} />;
+            case 'EARNINGS_RECEIVED': return <CheckCircle2 className="text-amber-500 border-amber-500/50" size={16} />;
+            case 'NEW_SUBMISSION': return <Info className="text-purple-500" size={16} />;
             default: return <Info className="text-blue-500" size={16} />;
         }
     };

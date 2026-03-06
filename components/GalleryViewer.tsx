@@ -116,6 +116,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                                     <>
                                         <Link href="/jobs" className="text-[11px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors">Jobs</Link>
                                         <Link href="/submissions" className="text-[11px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors">Submissions</Link>
+                                        <Link href="/teleop/earnings" className="text-[11px] font-black uppercase tracking-widest text-amber-400 hover:text-amber-300 transition-colors">Earnings</Link>
                                     </>
                                 )}
                                 {/* @ts-ignore */}
@@ -195,6 +196,7 @@ export default function GalleryViewer({ datasets }: GalleryViewerProps) {
                                         <>
                                             <Link href="/jobs" className="text-sm font-bold uppercase tracking-widest text-emerald-400" onClick={() => setIsMenuOpen(false)}>Jobs</Link>
                                             <Link href="/submissions" className="text-sm font-bold uppercase tracking-widest text-blue-400" onClick={() => setIsMenuOpen(false)}>Submissions</Link>
+                                            <Link href="/teleop/earnings" className="text-sm font-bold uppercase tracking-widest text-amber-400" onClick={() => setIsMenuOpen(false)}>Earnings</Link>
                                         </>
                                     )}
                                     {/* @ts-ignore */}

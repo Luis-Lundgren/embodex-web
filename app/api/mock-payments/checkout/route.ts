@@ -56,11 +56,60 @@ export async function POST(request: Request) {
                         userId: dataset.ownerId,
                         amountCents: amountCents, // Give them 100% for the mock
                         type: 'credit',
+                        status: 'completed',
                         description: `Earnings from dataset purchase: ${dataset.title}`,
                         referenceType: 'dataset',
                         referenceId: dataset.id
                     }
                 });
+
+                // Notify teleoperator
+                await prisma.notification.create({
+                    data: {
+                        userId: dataset.ownerId,
+                        type: 'EARNINGS_RECEIVED',
+                        message: `You earned $${(amountCents / 100).toFixed(2)} from a dataset purchase: ${dataset.title}`,
+                        link: '/teleop/earnings'
+                    }
+                });
+            }
+        } else if (referenceType === 'job_request' && referenceId) {
+            // Find the submission that corresponds to this job request
+            const submission = await prisma.request.findUnique({
+                where: { id: referenceId }
+            });
+
+            if (submission && submission.type === 'submission') {
+                const teleopUser = await prisma.user.findUnique({
+                    where: { email: submission.email }
+                });
+
+                if (teleopUser) {
+                    const payload = JSON.parse(submission.payload);
+                    const sessionName = payload.title || payload.sessionId || 'Task';
+
+                    await prisma.earningsLedger.create({
+                        data: {
+                            userId: teleopUser.id,
+                            amountCents: amountCents,
+                            type: 'credit',
+                            status: 'completed',
+                            description: `Bounty payout for: ${sessionName}`,
+                            referenceType: 'job_request',
+                            referenceId: submission.id
+                        }
+                    });
+
+                    // Notify teleoperator
+                    await prisma.notification.create({
+                        data: {
+                            userId: teleopUser.id,
+                            type: 'EARNINGS_RECEIVED',
+                            message: `You received a bounty payout of $${(amountCents / 100).toFixed(2)} for "${sessionName}".`,
+                            link: '/teleop/earnings'
+                        }
+                    });
+                }
             }
         }
 

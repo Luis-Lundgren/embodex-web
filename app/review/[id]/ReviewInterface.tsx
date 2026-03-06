@@ -253,7 +253,12 @@ export default function ReviewInterface({
             <MockCheckoutModal
                 isOpen={checkoutOpen}
                 onClose={() => setCheckoutOpen(false)}
-                amountCents={parseInt(requestPayload.budget || '100') > 0 ? parseInt(requestPayload.budget) * 100 : 5000}
+                amountCents={(() => {
+                    const budgetStr = requestPayload.budget || '100';
+                    // Handle ranges like "100-250" by taking the lower number
+                    const budgetNum = parseInt(budgetStr.split('-')[0].trim());
+                    return isNaN(budgetNum) ? 5000 : budgetNum * 100;
+                })()}
                 referenceType="job_request"
                 referenceId={requestId}
                 itemName={`Bounty for: ${requestPayload.title || 'Job'}`}

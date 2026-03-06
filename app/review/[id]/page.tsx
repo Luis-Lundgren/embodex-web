@@ -67,13 +67,25 @@ export default async function ReviewDetailPage({ params }: { params: { id: strin
         );
     }
 
+    // If this is a submission, we want to fetch the original request (job) to get the budget
+    let budget = payload.budget;
+    if (request.type === 'submission' && payload.jobId) {
+        const originalJob = await prisma.request.findUnique({
+            where: { id: payload.jobId }
+        });
+        if (originalJob) {
+            const jobPayload = JSON.parse(originalJob.payload);
+            budget = jobPayload.budget;
+        }
+    }
+
     return (
         <ReviewInterface
             requestId={request.id}
             datasetId={dataset.id}
             episodes={dataset.episodes}
             initialStatus={request.status}
-            requestPayload={payload}
+            requestPayload={{ ...payload, budget }}
             submittedBy={request.email}
             submittedAt={request.createdAt.toISOString()}
         />

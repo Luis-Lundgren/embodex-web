@@ -30,13 +30,22 @@ export default async function JobsPage() {
     return (
         <main className="min-h-screen bg-slate-950 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.05),transparent_50%)] p-4 md:p-12">
             <div className="max-w-5xl mx-auto">
-                <Link
-                    href="/"
-                    className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 md:mb-12 text-xs md:text-sm font-mono uppercase tracking-widest"
-                >
-                    <ArrowLeft size={16} />
-                    <span>Back to Exchange</span>
-                </Link>
+                <div className="flex justify-between items-center mb-8 md:mb-12">
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-2 text-slate-500 hover:text-white transition-colors text-xs md:text-sm font-mono uppercase tracking-widest"
+                    >
+                        <ArrowLeft size={16} />
+                        <span>Back to Exchange</span>
+                    </Link>
+                    <Link
+                        href="/teleop/earnings"
+                        className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-400 transition-colors text-xs md:text-sm font-mono uppercase tracking-widest font-bold bg-amber-500/5 px-4 py-2 rounded-xl border border-amber-500/20"
+                    >
+                        <DollarSign size={16} />
+                        <span>Earnings</span>
+                    </Link>
+                </div>
 
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 md:mb-12">
                     <div>
