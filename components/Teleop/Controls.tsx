@@ -10,12 +10,13 @@ interface ControlsProps {
     isConnected: boolean;
     isRecording: boolean;
     robotEngaged: boolean;
+    sessionId?: string | null;
     connectRobot: () => void;
     toggleRecording: () => void;
     className?: string;
 }
 
-export function TeleopControls({ isConnected, isRecording, robotEngaged, connectRobot, toggleRecording, className = "" }: ControlsProps) {
+export function TeleopControls({ isConnected, isRecording, robotEngaged, sessionId, connectRobot, toggleRecording, className = "" }: ControlsProps) {
     // Removed useXR to avoid context error outside Canvas
     // Browser usually hides DOM in VR anyway
 
@@ -51,6 +52,11 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, connect
                         {isRecording ? "REC ●" : "STOPPED"}
                     </span>
                 </div>
+                {sessionId && (
+                    <div className="text-[10px] font-mono text-white/40 truncate" title={sessionId}>
+                        Session: {sessionId}
+                    </div>
+                )}
             </div>
 
             <div className="space-y-2 pt-2 border-t border-gray-700">

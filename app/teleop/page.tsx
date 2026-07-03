@@ -26,6 +26,7 @@ function TeleopContent() {
 
     const [reviewSessionId, setReviewSessionId] = useState<string | null>(null);
     const wasRecording = useRef(false);
+    const activeSessionId = useRef<string | null>(null);
 
     // Check roles and redirect if needed
     useEffect(() => {
@@ -35,10 +36,16 @@ function TeleopContent() {
         // During dev/after reset, we'll be more lenient with roles on the teleop page
     }, [authStatus, router]);
 
+    const getApiUrl = useCallback((path: string) => {
+        return `${TELEGRIP_HTTP_URL.replace(/\/$/, '')}${path}`;
+    }, []);
+
     const handleRobotState = useCallback((state: any) => {
         setRobotState(state);
-        // Update local status from backend state
         if (state) {
+            if (state.session_id) {
+                activeSessionId.current = state.session_id;
+            }
             setStatus(prev => ({
                 ...prev,
                 recording: state.recording
@@ -46,35 +53,44 @@ function TeleopContent() {
         }
     }, []);
 
-    // Detect when recording session finishes
+    const handleRecordingStopped = useCallback((sessionId: string) => {
+        activeSessionId.current = sessionId;
+        setReviewSessionId(sessionId);
+        setDetecting(false);
+    }, []);
+
+    // Fallback: detect session when recording stops (if WS event missed)
     useEffect(() => {
         if (wasRecording.current && !status.recording) {
-            setDetecting(true);
-            // Just finished recording, look for newest session after a small delay
-            const detectSession = async () => {
-                await new Promise(r => setTimeout(r, 1000));
-                try {
-                    const res = await fetch('/api/teleop/sessions');
-                    const sessions = await res.json();
+            const knownSessionId = activeSessionId.current;
+            if (knownSessionId) {
+                setReviewSessionId(knownSessionId);
+                return;
+            }
 
-                    // Be more lenient: if it's an array and has items, use it.
-                    if (Array.isArray(sessions) && sessions.length > 0) {
-                        setReviewSessionId(sessions[0].id);
+            setDetecting(true);
+            const detectSession = async () => {
+                // Retry telegrip sessions API until the flush completes
+                for (let attempt = 0; attempt < 5; attempt++) {
+                    await new Promise(r => setTimeout(r, 1000));
+                    try {
+                        const res = await fetch(getApiUrl('/api/sessions'));
+                        if (!res.ok) continue;
+                        const sessions = await res.json();
+                        if (Array.isArray(sessions) && sessions.length > 0) {
+                            setReviewSessionId(sessions[0].id);
+                            return;
+                        }
+                    } catch (e) {
+                        console.error("Failed to detect latest record session:", e);
                     }
-                } catch (e) {
-                    console.error("Failed to detect latest record session:", e);
-                } finally {
-                    setDetecting(false);
                 }
+                setDetecting(false);
             };
             detectSession();
         }
         wasRecording.current = status.recording;
-    }, [status.recording]);
-
-    const getApiUrl = useCallback((path: string) => {
-        return `${TELEGRIP_HTTP_URL.replace(/\/$/, '')}${path}`;
-    }, []);
+    }, [status.recording, getApiUrl]);
 
     const getWsUrl = useCallback(() => {
         return TELEGRIP_WS_URL;
@@ -137,7 +153,8 @@ function TeleopContent() {
     const { connect, isConnected, sendControllerData, sendAction } = useTeleopClient({
         url: getWsUrl(),
         onRobotState: handleRobotState,
-        onStatusChange: handleStatusChange
+        onStatusChange: handleStatusChange,
+        onRecordingStopped: handleRecordingStopped,
     });
 
     // Connect on mount
@@ -170,6 +187,7 @@ function TeleopContent() {
                 isConnected={status.connected}
                 isRecording={status.recording}
                 robotEngaged={status.robotEngaged}
+                sessionId={robotState?.session_id}
                 connectRobot={connectRobot}
                 toggleRecording={toggleRecording}
             />

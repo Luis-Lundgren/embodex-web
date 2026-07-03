@@ -19,30 +19,37 @@ export async function POST(req: Request) {
             timestamps,
             joint_positions,
             metadata,
-            jobId
+            jobId,
+            episodes,
         } = body;
 
-        // Basic validation
-        if (!joint_positions || !timestamps) {
+        // Normalize telegrip format: { robot, episodes: [{ id, timestamps, joint_positions, ... }] }
+        const episode = episodes?.[0];
+        const resolvedSessionId = session_id || episode?.id;
+        const resolvedTimestamps = timestamps || episode?.timestamps;
+        const resolvedJointPositions = joint_positions || episode?.joint_positions;
+        const resolvedRobot = robot || body.robot || 'so100';
+
+        if (!resolvedJointPositions || !resolvedTimestamps) {
             return NextResponse.json({ error: 'Missing trajectory data' }, { status: 400 });
         }
 
-        const duration = metadata?.duration || (timestamps[timestamps.length - 1] - timestamps[0]) || 0;
-        const frameCount = metadata?.frame_count || joint_positions.length;
+        const duration = metadata?.duration || (resolvedTimestamps[resolvedTimestamps.length - 1] - resolvedTimestamps[0]) || 0;
+        const frameCount = metadata?.frame_count || resolvedJointPositions.length;
 
         // Find or create Dataset for this session_id
         // Usually session_id comes from TeleGrip backend
         let dataset = await prisma.dataset.findFirst({
-            where: { sourceId: session_id || 'manual_upload' }
+            where: { sourceId: resolvedSessionId || 'manual_upload' }
         });
 
         if (!dataset) {
             dataset = await prisma.dataset.create({
                 data: {
-                    title: `Teleop Session: ${session_id || 'New'}`,
-                    description: `Recorded trajectory using ${robot || 'unknown'} robot.`,
+                    title: `Teleop Session: ${resolvedSessionId || 'New'}`,
+                    description: `Recorded trajectory using ${resolvedRobot} robot.`,
                     sourceType: 'teleop',
-                    sourceId: session_id || 'manual_upload',
+                    sourceId: resolvedSessionId || 'manual_upload',
                     status: 'COMPLETED',
                     ownerId: (session.user as any).id
                 } as any
@@ -50,7 +57,7 @@ export async function POST(req: Request) {
         }
 
         // Create Episode with JSON data
-        const episode = await prisma.episode.create({
+        const episodeRecord = await prisma.episode.create({
             data: {
                 datasetId: dataset.id,
                 data: body as any,
@@ -70,7 +77,7 @@ export async function POST(req: Request) {
         return NextResponse.json({
             success: true,
             datasetId: dataset.id,
-            episodeId: episode.id
+            episodeId: episodeRecord.id
         });
 
     } catch (error) {

@@ -1,32 +1,45 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
-    /*
-    const session = await getServerSession(authOptions);
-    if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    */
+function getTelegripBaseUrl(): string | null {
+    const url = process.env.TELEGRIP_HTTP_URL || process.env.NEXT_PUBLIC_TELEGRIP_HTTP_URL;
+    return url ? url.replace(/\/$/, '') : null;
+}
 
+async function fetchFromTelegrip(path: string) {
+    const base = getTelegripBaseUrl();
+    if (!base) return null;
+    try {
+        const res = await fetch(`${base}${path}`, { cache: 'no-store' });
+        if (!res.ok) return null;
+        return res.json();
+    } catch (e) {
+        console.error(`Failed to fetch from telegrip ${path}:`, e);
+        return null;
+    }
+}
+
+export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const sessionId = searchParams.get('sessionId');
 
         if (sessionId) {
-            // Fetch specific session data from DB
+            // Prefer live session data from telegrip backend (filesystem)
+            const telegripData = await fetchFromTelegrip(`/api/sessions/${sessionId}`);
+            if (telegripData) {
+                return NextResponse.json(telegripData);
+            }
+
+            // Fallback to embodex DB
             const dataset = await prisma.dataset.findFirst({
                 where: { sourceId: sessionId },
                 include: { episodes: true }
             });
 
             if (dataset && dataset.episodes.length > 0 && dataset.episodes[0].data) {
-                // Return the 'data' field which contains the full JSON
-                // Inject the DB IDs so the frontend knows it's already persisted
                 const episode = dataset.episodes[0];
                 const responseData = {
                     ...(episode.data as object),
@@ -39,7 +52,12 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'No playable data found in session' }, { status: 404 });
         }
 
-        // List all sessions (datasets)
+        // List sessions: telegrip first, merge with DB entries
+        const telegripSessions = await fetchFromTelegrip('/api/sessions');
+        if (Array.isArray(telegripSessions) && telegripSessions.length > 0) {
+            return NextResponse.json(telegripSessions);
+        }
+
         const datasets = await prisma.dataset.findMany({
             orderBy: { createdAt: 'desc' },
             select: {
@@ -48,7 +66,6 @@ export async function GET(request: Request) {
             }
         });
 
-        // Map to format expected by frontend { id: string, createdAt: Date }
         const sessions = datasets.map((d: any) => ({
             id: d.sourceId,
             createdAt: d.createdAt

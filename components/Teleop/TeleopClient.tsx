@@ -5,12 +5,13 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 interface TeleopClientProps {
     onRobotState: (state: any) => void;
     onStatusChange: (connected: boolean) => void;
+    onRecordingStopped?: (sessionId: string, recordDir?: string) => void;
     url?: string;
 }
 
 import { TELEGRIP_WS_URL } from '@/lib/config';
 
-export function useTeleopClient({ onRobotState, onStatusChange, url = TELEGRIP_WS_URL }: TeleopClientProps) {
+export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopped, url = TELEGRIP_WS_URL }: TeleopClientProps) {
     const ws = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessageTime, setLastMessageTime] = useState(0);
@@ -53,6 +54,8 @@ export function useTeleopClient({ onRobotState, onStatusChange, url = TELEGRIP_W
                     if (data.type === 'robot_state') {
                         onRobotState(data);
                         setLastMessageTime(Date.now());
+                    } else if (data.type === 'recording_stopped' && data.session_id) {
+                        onRecordingStopped?.(data.session_id, data.record_dir);
                     }
                 } catch (e) {
                     console.error("Error parsing message:", e);
@@ -61,7 +64,7 @@ export function useTeleopClient({ onRobotState, onStatusChange, url = TELEGRIP_W
         } catch (e) {
             console.error("Failed to create WebSocket:", e);
         }
-    }, [url, onRobotState, onStatusChange]);
+    }, [url, onRobotState, onStatusChange, onRecordingStopped]);
 
     const disconnect = useCallback(() => {
         if (ws.current) {

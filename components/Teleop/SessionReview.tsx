@@ -23,10 +23,20 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
     const [rawPayload, setRawPayload] = useState<any>(null);
 
     useEffect(() => {
-        async function loadSession() {
+        let cancelled = false;
+
+        async function loadSession(attempt = 0) {
             try {
                 const res = await fetch(`/api/teleop/sessions?sessionId=${sessionId}`);
+                if (!res.ok) {
+                    if (res.status === 404 && attempt < 5) {
+                        await new Promise(r => setTimeout(r, 1000));
+                        if (!cancelled) return loadSession(attempt + 1);
+                    }
+                    return;
+                }
                 const json = await res.json();
+                if (cancelled) return;
                 setRawPayload(json);
 
                 let jointPositions = [];
@@ -46,10 +56,11 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
             } catch (e) {
                 console.error("Failed to load session for review", e);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         }
         loadSession();
+        return () => { cancelled = true; };
     }, [sessionId]);
 
     useEffect(() => {
@@ -132,6 +143,7 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                 <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                     <div>
                         <h2 className="text-lg md:text-xl font-bold text-white tracking-tight truncate max-w-[200px] md:max-w-none">Review Session</h2>
+                        <p className="text-white/40 text-[10px] font-mono mt-0.5">{sessionId}</p>
                         {jobId && <p className="text-emerald-400 text-[10px] font-mono uppercase mt-0.5">Job #{jobId}</p>}
                     </div>
                     <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
