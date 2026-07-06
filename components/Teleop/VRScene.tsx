@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { XR, createXRStore, useXR } from "@react-three/xr";
-import { OrbitControls, Environment, Grid } from "@react-three/drei";
+import { OrbitControls, Environment, Grid, useGLTF } from "@react-three/drei";
 import { useRef, useMemo, useState, useEffect } from "react";
 import { DigitalTwin } from "./DigitalTwin";
 import * as THREE from "three";
@@ -129,6 +129,13 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
     );
 }
 
+function WorkspaceTable() {
+    const { scene } = useGLTF("/assets/other/table.glb");
+    return <primitive object={scene} />;
+}
+
+useGLTF.preload("/assets/other/table.glb");
+
 function XRControllerIndicators() {
     const inputSourceStates = useXR((state: any) => state.inputSourceStates);
 
@@ -209,6 +216,10 @@ export function VRScene({ robotState, sendControllerData, sendAction }: VRSceneP
                 <directionalLight position={[1, 2, 3]} intensity={1.5} castShadow />
 
                 <group position={[0, 0.2, -0.4]}>
+                    {/* Workspace table under the robot base; rear edge flush with the back of the base */}
+                    <group position={[-0.2, 0.762, -0.625]}>
+                        <WorkspaceTable />
+                    </group>
                     <DigitalTwin joints={joints} />
                 </group>
 
