@@ -40,9 +40,15 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                 setRawPayload(json);
 
                 let jointPositions = [];
+                let objectPoses = null;
+                let task = json.task || null;
+                let success: boolean | undefined = json.task?.success;
 
                 if (json.episodes && json.episodes[0]) {
-                    jointPositions = json.episodes[0].joint_positions || [];
+                    const ep = json.episodes[0];
+                    jointPositions = ep.joint_positions || [];
+                    objectPoses = ep.object_poses || null;
+                    if (success === undefined) success = ep.success;
                 } else if (json.joint_positions) {
                     jointPositions = json.joint_positions;
                 } else if (Array.isArray(json)) {
@@ -51,6 +57,9 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
 
                 setData({
                     joint_positions: jointPositions,
+                    object_poses: objectPoses,
+                    task,
+                    success,
                     fps: json.fps || 30
                 });
             } catch (e) {
@@ -137,13 +146,37 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
         }
     };
 
+    // Build challenge object states for the current playback frame
+    const frameObjects = (() => {
+        const objs: any[] = [];
+        const pose = data?.object_poses?.[currentFrame];
+        if (pose && pose.length >= 7) {
+            objs.push({ id: 'fiber_connector', position: pose.slice(0, 3), quaternion: pose.slice(3, 7) });
+        }
+        const portPose = data?.task?.port_pose;
+        if (portPose && portPose.length >= 7) {
+            objs.push({ id: 'port_panel', position: portPose.slice(0, 3), quaternion: portPose.slice(3, 7), static: true });
+        }
+        return objs.length > 0 ? objs : null;
+    })();
+
     return (
         <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-2 md:p-4">
             <div className="bg-slate-900 border border-white/10 w-full max-w-5xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[90dvh] md:h-[80vh]">
                 <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
                     <div>
-                        <h2 className="text-lg md:text-xl font-bold text-white tracking-tight truncate max-w-[200px] md:max-w-none">Review Session</h2>
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <h2 className="text-lg md:text-xl font-bold text-white tracking-tight truncate max-w-[200px] md:max-w-none">Review Session</h2>
+                            {data?.task && (
+                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${data.success
+                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
+                                    {data.success ? '✓ Task Success' : 'Task Incomplete'}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-white/40 text-[10px] font-mono mt-0.5">{sessionId}</p>
+                        {data?.task?.name && <p className="text-blue-400 text-[10px] font-mono uppercase mt-0.5">{data.task.name}{data.task.elapsed_s ? ` · ${Number(data.task.elapsed_s).toFixed(1)}s` : ''}</p>}
                         {jobId && <p className="text-emerald-400 text-[10px] font-mono uppercase mt-0.5">Job #{jobId}</p>}
                     </div>
                     <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
@@ -157,7 +190,11 @@ export default function SessionReview({ sessionId, jobId, onClose }: SessionRevi
                             Buffering trajectory data...
                         </div>
                     ) : (
-                        <ViewerScene jointPositions={data?.joint_positions?.[currentFrame] || [0, 0, 0, 0, 0, 0]} />
+                        <ViewerScene
+                            jointPositions={data?.joint_positions?.[currentFrame] || [0, 0, 0, 0, 0, 0]}
+                            objects={frameObjects}
+                            task={data?.task}
+                        />
                     )}
 
                     {/* Simple Playback Overlay */}

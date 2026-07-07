@@ -5,6 +5,7 @@ import { XR, createXRStore, useXR } from "@react-three/xr";
 import { OrbitControls, Environment, Grid, useGLTF } from "@react-three/drei";
 import { useRef, useMemo, useState, useEffect } from "react";
 import { DigitalTwin } from "./DigitalTwin";
+import { ChallengeProps } from "./ChallengeProps";
 import * as THREE from "three";
 
 // Create the store outside the component to be accessible
@@ -78,6 +79,15 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
                 }
                 if (!prevButtons.current['right']) prevButtons.current['right'] = {};
                 prevButtons.current['right']['b'] = !!bPressed;
+
+                // A button (Right hand button 4) resets the challenge task
+                const aPressed = gamepad?.buttons[4]?.pressed;
+                const aWasPressed = prevButtons.current['right']?.['a'];
+                if (aPressed && !aWasPressed) {
+                    console.log("A Button Pressed - Resetting Task");
+                    sendAction('task_reset');
+                }
+                prevButtons.current['right']['a'] = !!aPressed;
             }
 
             const controllerData = {
@@ -221,6 +231,7 @@ export function VRScene({ robotState, sendControllerData, sendAction }: VRSceneP
                         <WorkspaceTable />
                     </group>
                     <DigitalTwin joints={joints} />
+                    <ChallengeProps objects={robotState?.objects} task={robotState?.task} />
                 </group>
 
                 {/* Only show helpful visuals when NOT in AR/Passthrough */}

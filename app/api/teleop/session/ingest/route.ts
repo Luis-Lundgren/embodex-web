@@ -23,12 +23,14 @@ export async function POST(req: Request) {
             episodes,
         } = body;
 
-        // Normalize telegrip format: { robot, episodes: [{ id, timestamps, joint_positions, ... }] }
+        // Normalize telegrip format: { robot, task?, episodes: [{ id, timestamps, joint_positions, object_poses?, success?, ... }] }
         const episode = episodes?.[0];
         const resolvedSessionId = session_id || episode?.id;
         const resolvedTimestamps = timestamps || episode?.timestamps;
         const resolvedJointPositions = joint_positions || episode?.joint_positions;
         const resolvedRobot = robot || body.robot || 'so100';
+        const task = body.task || null;
+        const taskSuccess = task?.success ?? episode?.success;
 
         if (!resolvedJointPositions || !resolvedTimestamps) {
             return NextResponse.json({ error: 'Missing trajectory data' }, { status: 400 });
@@ -44,10 +46,13 @@ export async function POST(req: Request) {
         });
 
         if (!dataset) {
+            const taskLabel = task?.name
+                ? ` Challenge: ${task.name} (${taskSuccess ? 'SUCCESS' : 'incomplete'}${task.attempts ? `, attempt ${task.attempts}` : ''}).`
+                : '';
             dataset = await prisma.dataset.create({
                 data: {
                     title: `Teleop Session: ${resolvedSessionId || 'New'}`,
-                    description: `Recorded trajectory using ${resolvedRobot} robot.`,
+                    description: `Recorded trajectory using ${resolvedRobot} robot.${taskLabel}`,
                     sourceType: 'teleop',
                     sourceId: resolvedSessionId || 'manual_upload',
                     status: 'COMPLETED',

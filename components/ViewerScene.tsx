@@ -4,13 +4,16 @@ import React, { Suspense, useState, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, GizmoHelper, GizmoViewport, Environment, ContactShadows } from "@react-three/drei";
 import { RobotModel } from "./RobotModel";
+import { ChallengeProps, ChallengeObject, TaskState } from "./Teleop/ChallengeProps";
 import * as THREE from "three";
 
 interface ViewerSceneProps {
     jointPositions: number[];
+    objects?: ChallengeObject[] | null;
+    task?: TaskState | null;
 }
 
-export default function ViewerScene({ jointPositions }: ViewerSceneProps) {
+export default function ViewerScene({ jointPositions, objects, task }: ViewerSceneProps) {
     const [eePosition, setEEPosition] = useState<THREE.Vector3>(new THREE.Vector3());
 
     const handleEEUpdate = useCallback((pos: THREE.Vector3) => {
@@ -28,6 +31,9 @@ export default function ViewerScene({ jointPositions }: ViewerSceneProps) {
                     <directionalLight position={[5, 10, 5]} intensity={2} castShadow />
 
                     <RobotModel jointPositions={jointPositions} onEEUpdate={handleEEUpdate} />
+
+                    {/* Challenge props replay (poses in robot base frame, same root transform as RobotModel) */}
+                    <ChallengeProps objects={objects} task={task} position={[0, 0, 0]} showLabel={false} />
 
                     <ContactShadows
                         position={[0, 0, 0]}

@@ -166,6 +166,10 @@ function TeleopContent() {
         sendAction('record_toggle');
     }, [sendAction]);
 
+    const resetTask = useCallback(() => {
+        sendAction('task_reset');
+    }, [sendAction]);
+
     return (
         <main className="fixed inset-0 h-screen h-[100dvh] bg-black overflow-hidden relative z-0">
             {detecting && (
@@ -188,8 +192,10 @@ function TeleopContent() {
                 isRecording={status.recording}
                 robotEngaged={status.robotEngaged}
                 sessionId={robotState?.session_id}
+                task={robotState?.task}
                 connectRobot={connectRobot}
                 toggleRecording={toggleRecording}
+                resetTask={resetTask}
             />
 
             <div className="absolute inset-0 z-0">

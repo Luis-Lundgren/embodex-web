@@ -6,17 +6,27 @@ import { xrStore } from "./VRScene";
 
 import Link from 'next/link';
 
+interface TaskStatus {
+    name: string;
+    success: boolean;
+    elapsed_s: number;
+    attempts: number;
+    grasped?: boolean;
+}
+
 interface ControlsProps {
     isConnected: boolean;
     isRecording: boolean;
     robotEngaged: boolean;
     sessionId?: string | null;
+    task?: TaskStatus | null;
     connectRobot: () => void;
     toggleRecording: () => void;
+    resetTask?: () => void;
     className?: string;
 }
 
-export function TeleopControls({ isConnected, isRecording, robotEngaged, sessionId, connectRobot, toggleRecording, className = "" }: ControlsProps) {
+export function TeleopControls({ isConnected, isRecording, robotEngaged, sessionId, task, connectRobot, toggleRecording, resetTask, className = "" }: ControlsProps) {
     // Removed useXR to avoid context error outside Canvas
     // Browser usually hides DOM in VR anyway
 
@@ -59,6 +69,32 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, session
                 )}
             </div>
 
+            {task && (
+                <div className="flex flex-col gap-2 pt-2 border-t border-gray-700">
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-300">Challenge:</span>
+                        <span className={`px-2 py-0.5 rounded text-xs font-bold ${task.success
+                            ? 'bg-green-500/20 text-green-400'
+                            : task.grasped
+                                ? 'bg-blue-500/20 text-blue-400'
+                                : 'bg-gray-700 text-gray-400'}`}>
+                            {task.success ? "PLUGGED IN ✓" : task.grasped ? "CABLE GRASPED" : "IN PROGRESS"}
+                        </span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-gray-400 font-mono">
+                        <span title={task.name}>{task.name}</span>
+                        <span>{task.elapsed_s.toFixed(1)}s · attempt {task.attempts}</span>
+                    </div>
+                    <button
+                        onClick={resetTask}
+                        disabled={!isConnected}
+                        className="w-full py-1.5 px-4 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors"
+                    >
+                        Reset Task
+                    </button>
+                </div>
+            )}
+
             <div className="space-y-2 pt-2 border-t border-gray-700">
                 <button
                     onClick={connectRobot}
@@ -94,6 +130,8 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, session
                     <li>Hold Grip to move arm.</li>
                     <li>Hold Trigger to close gripper.</li>
                     <li>Press 'X' on Left controller to toggle recording.</li>
+                    <li>Press 'A' on Right controller to reset the challenge.</li>
+                    <li>Goal: plug the fiber cable into the port.</li>
                 </ul>
             </div>
         </div>
