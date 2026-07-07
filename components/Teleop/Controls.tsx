@@ -1,9 +1,5 @@
 "use client";
 
-import { useXR } from "@react-three/xr";
-import { useState, useEffect } from "react";
-import { xrStore } from "./VRScene";
-
 import Link from 'next/link';
 
 interface TaskStatus {
@@ -116,7 +112,7 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, session
                 </button>
 
                 <button
-                    onClick={() => xrStore.enterAR()}
+                    onClick={() => import("./xrStore").then((m) => m.xrStore.enterAR())}
                     className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors mt-2"
                 >
                     Enter XR

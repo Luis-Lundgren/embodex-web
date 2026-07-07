@@ -1,17 +1,13 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { XR, createXRStore, useXR } from "@react-three/xr";
+import { XR, useXR } from "@react-three/xr";
 import { OrbitControls, Environment, Grid, useGLTF } from "@react-three/drei";
 import { useRef, useMemo, useState, useEffect } from "react";
 import { DigitalTwin } from "./DigitalTwin";
 import { ChallengeProps } from "./ChallengeProps";
+import { xrStore } from "./xrStore";
 import * as THREE from "three";
-
-// Create the store outside the component to be accessible
-export const xrStore = createXRStore({
-    // Features are requested automatically by enterAR()
-});
 
 interface VRSceneProps {
     robotState: any;
