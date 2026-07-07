@@ -67,9 +67,24 @@ export function ChallengeProps({ objects, task, position = [-0.2, 0.762, -0.5], 
         'YXZ'
     ), []);
 
-    if (!objects || objects.length === 0) return null;
+    if (!objects || objects.length === 0) {
+        // #region agent log
+        if (!(window as any).__dbgNoObjects) {
+            (window as any).__dbgNoObjects = true;
+            fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-D',location:'ChallengeProps.tsx:render',message:'ChallengeProps hidden - no objects',data:{objects:objects??null,task:task??null},timestamp:Date.now()})}).catch(()=>{});
+        }
+        // #endregion
+        return null;
+    }
 
     const port = objects.find(o => o.id === "port_panel");
+
+    // #region agent log
+    if (!(window as any).__dbgPropsShown) {
+        (window as any).__dbgPropsShown = true;
+        fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-D',location:'ChallengeProps.tsx:render',message:'ChallengeProps rendering',data:{objectIds:objects.map(o=>o.id),task:task??null},timestamp:Date.now()})}).catch(()=>{});
+    }
+    // #endregion
 
     return (
         <group position={position} rotation={baseRotation}>

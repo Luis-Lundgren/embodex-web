@@ -31,6 +31,12 @@ export default function TeleopContent() {
     const searchParams = useSearchParams();
     const jobId = searchParams.get("jobId");
 
+    // #region agent log
+    useEffect(() => {
+        fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-C',location:'TeleopContent.tsx:mount',message:'TeleopContent mounted',data:{authStatus,jobId,wsUrl:TELEGRIP_WS_URL,httpUrl:TELEGRIP_HTTP_URL},timestamp:Date.now()})}).catch(()=>{});
+    }, [authStatus, jobId]);
+    // #endregion
+
     const [robotState, setRobotState] = useState<any>(null);
     const [status, setStatus] = useState({
         connected: false,
@@ -55,6 +61,12 @@ export default function TeleopContent() {
     }, []);
 
     const handleRobotState = useCallback((state: any) => {
+        // #region agent log
+        if (!(window as any).__dbgStateLogged) {
+            (window as any).__dbgStateLogged = true;
+            fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-D',location:'TeleopContent.tsx:handleRobotState',message:'first robot_state in UI state',data:{hasObjects:Array.isArray(state?.objects),objectIds:(state?.objects||[]).map((o:any)=>o.id),task:state?.task||null,leftArm:state?.left_arm},timestamp:Date.now()})}).catch(()=>{});
+        }
+        // #endregion
         setRobotState(state);
         if (state) {
             if (state.session_id) {

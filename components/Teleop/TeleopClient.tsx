@@ -32,12 +32,18 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
 
             ws.current.onopen = () => {
                 console.log("Connected to TeleGrip backend");
+                // #region agent log
+                fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-A',location:'TeleopClient.tsx:onopen',message:'WS connected',data:{url:targetUrl},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
                 setIsConnected(true);
                 onStatusChange(true);
             };
 
-            ws.current.onclose = () => {
+            ws.current.onclose = (ev) => {
                 console.log("Disconnected from TeleGrip backend");
+                // #region agent log
+                fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-A',location:'TeleopClient.tsx:onclose',message:'WS closed',data:{url:targetUrl,code:ev?.code,reason:String(ev?.reason||'')},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
                 setIsConnected(false);
                 onStatusChange(false);
                 ws.current = null;
@@ -45,6 +51,9 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
 
             ws.current.onerror = (err) => {
                 console.error("WebSocket error:", err);
+                // #region agent log
+                fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-A',location:'TeleopClient.tsx:onerror',message:'WS error event',data:{url:targetUrl},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion
                 // Dont set connected false here, onclose will handle it
             };
 
@@ -52,6 +61,12 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
                 try {
                     const data = JSON.parse(event.data);
                     if (data.type === 'robot_state') {
+                        // #region agent log
+                        (window as any).__dbgRsCount = ((window as any).__dbgRsCount || 0) + 1;
+                        if ((window as any).__dbgRsCount === 1 || (window as any).__dbgRsCount % 500 === 0) {
+                            fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-B',location:'TeleopClient.tsx:onmessage',message:'robot_state received',data:{count:(window as any).__dbgRsCount,keys:Object.keys(data),hasObjects:Array.isArray(data.objects),objectIds:(data.objects||[]).map((o:any)=>o.id),task:data.task||null,leftArmLen:(data.left_arm||[]).length},timestamp:Date.now()})}).catch(()=>{});
+                        }
+                        // #endregion
                         onRobotState(data);
                         setLastMessageTime(Date.now());
                     } else if (data.type === 'recording_stopped' && data.session_id) {

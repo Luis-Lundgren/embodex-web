@@ -213,6 +213,12 @@ export function VRScene({ robotState, sendControllerData, sendAction }: VRSceneP
         return [0, 0, 0, 0, 0, 0];
     }, [robotState]);
 
+    // #region agent log
+    useEffect(() => {
+        fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-E',location:'VRScene.tsx:mount',message:'VRScene mounted',data:{hasRobotState:!!robotState,objectCount:robotState?.objects?.length||0,objectIds:(robotState?.objects||[]).map((o:any)=>o.id),joints},timestamp:Date.now()})}).catch(()=>{});
+    }, []);
+    // #endregion
+
     return (
         <Canvas gl={{ alpha: true, antialias: true }}>
             <XR store={xrStore}>
