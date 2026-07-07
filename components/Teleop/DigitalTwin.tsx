@@ -1,9 +1,9 @@
 "use client";
 
-import { useGLTF } from "@react-three/drei";
 import { useRef, useMemo } from "react";
 import { Group, MathUtils, Euler } from "three";
 import { useFrame } from "@react-three/fiber";
+import { usePlainGLTF, preloadPlainGLTF } from "@/lib/plainGltf";
 
 interface DigitalTwinProps {
     joints: number[]; // [j1, j2, j3, j4, j5, j6] in degrees
@@ -13,7 +13,7 @@ interface DigitalTwinProps {
 const ASSET_PATH = "/assets/robots/so100/glb/";
 
 function Part({ url }: { url: string }) {
-    const { scene } = useGLTF(ASSET_PATH + url);
+    const { scene } = usePlainGLTF(ASSET_PATH + url);
     // Ensure all materials are visible and potentially highlighted
     return <primitive object={scene.clone()} />;
 }
@@ -116,16 +116,16 @@ export function DigitalTwin({ joints, visible = true }: DigitalTwinProps) {
 }
 
 // Preload assets
-useGLTF.preload(ASSET_PATH + "Base.glb");
-useGLTF.preload(ASSET_PATH + "Base_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Rotation_Pitch.glb");
-useGLTF.preload(ASSET_PATH + "Rotation_Pitch_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Upper_Arm.glb");
-useGLTF.preload(ASSET_PATH + "Upper_Arm_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Lower_Arm.glb");
-useGLTF.preload(ASSET_PATH + "Lower_Arm_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Wrist_Pitch_Roll.glb");
-useGLTF.preload(ASSET_PATH + "Wrist_Pitch_Roll_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Fixed_Jaw.glb");
-useGLTF.preload(ASSET_PATH + "Fixed_Jaw_Motor.glb");
-useGLTF.preload(ASSET_PATH + "Moving_Jaw.glb");
+preloadPlainGLTF(ASSET_PATH + "Base.glb");
+preloadPlainGLTF(ASSET_PATH + "Base_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Rotation_Pitch.glb");
+preloadPlainGLTF(ASSET_PATH + "Rotation_Pitch_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Upper_Arm.glb");
+preloadPlainGLTF(ASSET_PATH + "Upper_Arm_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Lower_Arm.glb");
+preloadPlainGLTF(ASSET_PATH + "Lower_Arm_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Wrist_Pitch_Roll.glb");
+preloadPlainGLTF(ASSET_PATH + "Wrist_Pitch_Roll_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Fixed_Jaw.glb");
+preloadPlainGLTF(ASSET_PATH + "Fixed_Jaw_Motor.glb");
+preloadPlainGLTF(ASSET_PATH + "Moving_Jaw.glb");

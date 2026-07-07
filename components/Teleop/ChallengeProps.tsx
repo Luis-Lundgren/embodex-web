@@ -1,8 +1,9 @@
 "use client";
 
-import { useGLTF, Text } from "@react-three/drei";
-import { useMemo } from "react";
+import { Text } from "@react-three/drei";
+import { Suspense, useMemo } from "react";
 import { Euler, MathUtils } from "three";
+import { usePlainGLTF, preloadPlainGLTF } from "@/lib/plainGltf";
 
 const ASSET_PATH = "/assets/challenges/fiber_plug/";
 
@@ -36,16 +37,45 @@ const OBJECT_MODELS: Record<string, string> = {
     port_panel: "port_panel.glb",
 };
 
+/** GLB ferrule art faces opposite the sim +Y insertion axis; yaw 180° in object space. */
+const CONNECTOR_MODEL_YAW = Math.PI;
+
 function ObjectModel({ obj }: { obj: ChallengeObject }) {
     const file = OBJECT_MODELS[obj.id];
-    const { scene } = useGLTF(ASSET_PATH + (file || "fiber_connector.glb"));
+    const { scene } = usePlainGLTF(ASSET_PATH + (file || "fiber_connector.glb"));
     if (!file) return null;
+    const model = <primitive object={scene.clone()} />;
     return (
         <group
             position={[obj.position[0], obj.position[1], obj.position[2]]}
             quaternion={[obj.quaternion[0], obj.quaternion[1], obj.quaternion[2], obj.quaternion[3]]}
         >
-            <primitive object={scene.clone()} />
+            {obj.id === "fiber_connector" ? (
+                <group rotation={[0, 0, CONNECTOR_MODEL_YAW]}>{model}</group>
+            ) : (
+                model
+            )}
+        </group>
+    );
+}
+
+function TaskLabel({ task, port }: { task: TaskState; port: ChallengeObject }) {
+    return (
+        <group position={[port.position[0], port.position[1], port.position[2] + 0.2]}>
+            <group rotation={[MathUtils.degToRad(90), MathUtils.degToRad(180), 0]}>
+                <Text
+                    fontSize={0.025}
+                    color={task.success ? "#22c55e" : "#e2e8f0"}
+                    anchorX="center"
+                    anchorY="middle"
+                    outlineWidth={0.002}
+                    outlineColor="#020617"
+                >
+                    {task.success
+                        ? `PLUGGED IN  ${task.elapsed_s.toFixed(1)}s`
+                        : `FIBER PLUG CHALLENGE  ${task.elapsed_s.toFixed(0)}s  ·  attempt ${task.attempts}`}
+                </Text>
+            </group>
         </group>
     );
 }
@@ -68,23 +98,10 @@ export function ChallengeProps({ objects, task, position = [-0.2, 0.762, -0.5], 
     ), []);
 
     if (!objects || objects.length === 0) {
-        // #region agent log
-        if (!(window as any).__dbgNoObjects) {
-            (window as any).__dbgNoObjects = true;
-            fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-D',location:'ChallengeProps.tsx:render',message:'ChallengeProps hidden - no objects',data:{objects:objects??null,task:task??null},timestamp:Date.now()})}).catch(()=>{});
-        }
-        // #endregion
         return null;
     }
 
     const port = objects.find(o => o.id === "port_panel");
-
-    // #region agent log
-    if (!(window as any).__dbgPropsShown) {
-        (window as any).__dbgPropsShown = true;
-        fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-D',location:'ChallengeProps.tsx:render',message:'ChallengeProps rendering',data:{objectIds:objects.map(o=>o.id),task:task??null},timestamp:Date.now()})}).catch(()=>{});
-    }
-    // #endregion
 
     return (
         <group position={position} rotation={baseRotation}>
@@ -92,29 +109,15 @@ export function ChallengeProps({ objects, task, position = [-0.2, 0.762, -0.5], 
                 <ObjectModel key={obj.id} obj={obj} />
             ))}
 
-            {/* Floating task status above the port panel (Z is up in this frame) */}
+            {/* Label suspends on troika font load — keep in its own Suspense so GLB props stay visible in XR */}
             {showLabel && task && port && (
-                <group position={[port.position[0], port.position[1], port.position[2] + 0.2]}>
-                    {/* Counter-rotate so the label is upright in world space and faces the operator */}
-                    <group rotation={[MathUtils.degToRad(90), MathUtils.degToRad(180), 0]}>
-                        <Text
-                            fontSize={0.025}
-                            color={task.success ? "#22c55e" : "#e2e8f0"}
-                            anchorX="center"
-                            anchorY="middle"
-                            outlineWidth={0.002}
-                            outlineColor="#020617"
-                        >
-                            {task.success
-                                ? `PLUGGED IN  ${task.elapsed_s.toFixed(1)}s`
-                                : `FIBER PLUG CHALLENGE  ${task.elapsed_s.toFixed(0)}s  ·  attempt ${task.attempts}`}
-                        </Text>
-                    </group>
-                </group>
+                <Suspense fallback={null}>
+                    <TaskLabel task={task} port={port} />
+                </Suspense>
             )}
         </group>
     );
 }
 
-useGLTF.preload(ASSET_PATH + "fiber_connector.glb");
-useGLTF.preload(ASSET_PATH + "port_panel.glb");
+preloadPlainGLTF(ASSET_PATH + "fiber_connector.glb");
+preloadPlainGLTF(ASSET_PATH + "port_panel.glb");

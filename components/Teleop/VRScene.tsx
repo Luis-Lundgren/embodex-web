@@ -2,11 +2,12 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { XR, useXR } from "@react-three/xr";
-import { OrbitControls, Environment, Grid, useGLTF } from "@react-three/drei";
-import { useRef, useMemo, useState, useEffect } from "react";
+import { OrbitControls, Grid } from "@react-three/drei";
+import { Suspense, useRef, useMemo, useState, Component, type ReactNode } from "react";
 import { DigitalTwin } from "./DigitalTwin";
 import { ChallengeProps } from "./ChallengeProps";
 import { xrStore } from "./xrStore";
+import { usePlainGLTF, preloadPlainGLTF } from "@/lib/plainGltf";
 import * as THREE from "three";
 
 interface VRSceneProps {
@@ -15,7 +16,27 @@ interface VRSceneProps {
     sendAction: (action: string) => void;
 }
 
-function ControllerManager({ sendControllerData, sendAction }: { sendControllerData: any, sendAction: any }) {
+function SceneCore({ joints }: { joints: number[] }) {
+    return (
+        <group position={[0, 0.2, -0.4]}>
+            <group position={[-0.2, 0.762, -0.625]}>
+                <WorkspaceTable />
+            </group>
+            <DigitalTwin joints={joints} />
+        </group>
+    );
+}
+
+function SceneGrid() {
+    const isAR = useXR((state: any) => state.session?.mode === "immersive-ar");
+    if (isAR) return null;
+
+    return (
+        <Grid infiniteGrid fadeDistance={50} sectionColor="#4a4a4a" cellColor="#666" />
+    );
+}
+
+function ControllerManager({ sendControllerData, sendAction }: { sendControllerData: any; sendAction: any }) {
     const { gl } = useThree();
     const prevButtons = useRef<{ [key: string]: { [btn: string]: boolean } }>({});
     const [sending, setSending] = useState(false);
@@ -28,62 +49,52 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
         }
 
         const timestamp = Date.now();
-        // Backend (vr_ws_server.py) expects BOTH keys
         const packet: any = {
             timestamp,
             leftController: null,
-            rightController: null
+            rightController: null,
         };
         const referenceSpace = gl.xr.getReferenceSpace();
         if (!referenceSpace) return;
 
-        let hasController = false;
-
         for (const inputSource of Array.from(session.inputSources)) {
             const hand = inputSource.handedness;
-            if (hand === 'none') continue;
+            if (hand === "none") continue;
             if (!inputSource.gripSpace) continue;
 
             const pose = frame.getPose(inputSource.gripSpace, referenceSpace);
             if (!pose) continue;
 
-            hasController = true;
             const { position, orientation } = pose.transform;
             const gamepad = inputSource.gamepad;
             const trigger = gamepad?.buttons[0];
             const grip = gamepad?.buttons[1];
 
-            // Detect X button (Left hand button 4)
-            if (hand === 'left') {
+            if (hand === "left") {
                 const xPressed = gamepad?.buttons[4]?.pressed;
-                const wasPressed = prevButtons.current['left']?.['x'];
+                const wasPressed = prevButtons.current["left"]?.["x"];
                 if (xPressed && !wasPressed) {
-                    console.log("X Button Pressed - Toggling Recording");
-                    sendAction('record_toggle');
+                    sendAction("record_toggle");
                 }
-                if (!prevButtons.current['left']) prevButtons.current['left'] = {};
-                prevButtons.current['left']['x'] = !!xPressed;
+                if (!prevButtons.current["left"]) prevButtons.current["left"] = {};
+                prevButtons.current["left"]["x"] = !!xPressed;
             }
 
-            // Detect B button (Right hand button 5) or Menu button to Exit VR
-            if (hand === 'right') {
+            if (hand === "right") {
                 const bPressed = gamepad?.buttons[5]?.pressed;
-                const wasPressed = prevButtons.current['right']?.['b'];
+                const wasPressed = prevButtons.current["right"]?.["b"];
                 if (bPressed && !wasPressed) {
-                    console.log("B Button Pressed - Exiting XR");
                     session.end();
                 }
-                if (!prevButtons.current['right']) prevButtons.current['right'] = {};
-                prevButtons.current['right']['b'] = !!bPressed;
+                if (!prevButtons.current["right"]) prevButtons.current["right"] = {};
+                prevButtons.current["right"]["b"] = !!bPressed;
 
-                // A button (Right hand button 4) resets the challenge task
                 const aPressed = gamepad?.buttons[4]?.pressed;
-                const aWasPressed = prevButtons.current['right']?.['a'];
+                const aWasPressed = prevButtons.current["right"]?.["a"];
                 if (aPressed && !aWasPressed) {
-                    console.log("A Button Pressed - Resetting Task");
-                    sendAction('task_reset');
+                    sendAction("task_reset");
                 }
-                prevButtons.current['right']['a'] = !!aPressed;
+                prevButtons.current["right"]["a"] = !!aPressed;
             }
 
             const controllerData = {
@@ -94,10 +105,10 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
                     x: orientation.x,
                     y: orientation.y,
                     z: orientation.z,
-                    w: orientation.w
+                    w: orientation.w,
                 },
                 gripActive: grip?.pressed || false,
-                trigger: trigger?.pressed ? 1 : 0
+                trigger: trigger?.pressed ? 1 : 0,
             };
 
             const euler = new THREE.Euler().setFromQuaternion(
@@ -114,19 +125,12 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
         if (packet.leftController || packet.rightController) {
             sendControllerData(packet);
             if (!sending) setSending(true);
-
-            // Debug log every ~60 frames (1 sec)
-            if (state.clock.elapsedTime % 1.0 < 0.02) {
-                console.log("Sending VR Packet:", packet);
-            }
         }
     });
 
     return (
         <>
             <XRControllerIndicators />
-
-            {/* Debug Status Sphere floating in front of user */}
             <mesh position={[0, 1.5, -0.5]}>
                 <sphereGeometry args={[0.02]} />
                 <meshBasicMaterial color={sending ? "#00ff00" : "#ff0000"} />
@@ -136,18 +140,19 @@ function ControllerManager({ sendControllerData, sendAction }: { sendControllerD
 }
 
 function WorkspaceTable() {
-    const { scene } = useGLTF("/assets/other/table.glb");
+    const { scene } = usePlainGLTF("/assets/other/table.glb");
     return <primitive object={scene} />;
 }
 
-useGLTF.preload("/assets/other/table.glb");
+preloadPlainGLTF("/assets/other/table.glb");
 
 function XRControllerIndicators() {
     const inputSourceStates = useXR((state: any) => state.inputSourceStates);
 
-    const controllers = useMemo(() =>
-        (inputSourceStates || []).filter((s: any) => s.type === 'controller'),
-        [inputSourceStates]);
+    const controllers = useMemo(
+        () => (inputSourceStates || []).filter((s: any) => s.type === "controller"),
+        [inputSourceStates]
+    );
 
     return (
         <>
@@ -180,7 +185,6 @@ function ControllerVisual({ inputSource }: { inputSource: XRInputSource }) {
 
     return (
         <group ref={groupRef}>
-            {/* Axis indicators like telegrip */}
             <mesh position={[0.04, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
                 <cylinderGeometry args={[0.003, 0.003, 0.08]} />
                 <meshBasicMaterial color="red" />
@@ -193,8 +197,6 @@ function ControllerVisual({ inputSource }: { inputSource: XRInputSource }) {
                 <cylinderGeometry args={[0.003, 0.003, 0.08]} />
                 <meshBasicMaterial color="blue" />
             </mesh>
-
-            {/* Visual feedback for buttons */}
             <mesh position={[0, 0, -0.02]}>
                 <sphereGeometry args={[0.015]} />
                 <meshBasicMaterial
@@ -207,52 +209,86 @@ function ControllerVisual({ inputSource }: { inputSource: XRInputSource }) {
     );
 }
 
+function ChallengeLayer({
+    objects,
+    task,
+}: {
+    objects?: any[] | null;
+    task?: any | null;
+}) {
+    const isXR = useXR((state: any) => !!state.session);
+
+    return (
+        <group position={[0, 0.2, -0.4]}>
+            <ChallengeProps
+                objects={objects}
+                task={task}
+                showLabel={isXR}
+            />
+        </group>
+    );
+}
+
 export function VRScene({ robotState, sendControllerData, sendAction }: VRSceneProps) {
     const joints = useMemo(() => {
         if (robotState?.left_arm) return robotState.left_arm;
         return [0, 0, 0, 0, 0, 0];
     }, [robotState]);
 
-    // #region agent log
-    useEffect(() => {
-        fetch('http://127.0.0.1:7759/ingest/2a8bebe3-42de-41ab-937c-69e24e1e5899',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'985bef'},body:JSON.stringify({sessionId:'985bef',hypothesisId:'H-E',location:'VRScene.tsx:mount',message:'VRScene mounted',data:{hasRobotState:!!robotState,objectCount:robotState?.objects?.length||0,objectIds:(robotState?.objects||[]).map((o:any)=>o.id),joints},timestamp:Date.now()})}).catch(()=>{});
-    }, []);
-    // #endregion
-
     return (
-        <Canvas gl={{ alpha: true, antialias: true }}>
-            <XR store={xrStore}>
-                <ControllerManager sendControllerData={sendControllerData} sendAction={sendAction} />
+        <div className="relative h-full w-full">
+            <Canvas
+                style={{ width: "100%", height: "100%" }}
+                dpr={[1, 2]}
+                gl={{ alpha: true, antialias: true }}
+                camera={{ position: [0.5, 1.2, 1.5], fov: 50 }}
+            >
+                <XR store={xrStore}>
+                    <ambientLight intensity={1.5} />
+                    <directionalLight position={[1, 2, 3]} intensity={1.5} castShadow />
 
-                <ambientLight intensity={1.5} />
-                <directionalLight position={[1, 2, 3]} intensity={1.5} castShadow />
+                    <SceneGrid />
 
-                <group position={[0, 0.2, -0.4]}>
-                    {/* Workspace table under the robot base; rear edge flush with the back of the base */}
-                    <group position={[-0.2, 0.762, -0.625]}>
-                        <WorkspaceTable />
-                    </group>
-                    <DigitalTwin joints={joints} />
-                    <ChallengeProps objects={robotState?.objects} task={robotState?.task} />
-                </group>
+                    <Suspense fallback={null}>
+                        <SceneCore joints={joints} />
+                    </Suspense>
 
-                {/* Only show helpful visuals when NOT in AR/Passthrough */}
-                <SceneBackground />
-                <OrbitControls makeDefault />
-            </XR>
-        </Canvas>
+                    <Suspense fallback={null}>
+                        <ChallengeLayer objects={robotState?.objects} task={robotState?.task} />
+                    </Suspense>
+
+                    <ControllerManager sendControllerData={sendControllerData} sendAction={sendAction} />
+                    <OrbitControls makeDefault target={[0, 0.8, -0.3]} />
+                </XR>
+            </Canvas>
+        </div>
     );
 }
 
-function SceneBackground() {
-    const isAR = useXR((state: any) => state.session?.mode === 'immersive-ar');
+export default VRScene;
 
-    if (isAR) return null;
+interface SceneErrorBoundaryProps {
+    children: ReactNode;
+    fallback: ReactNode;
+}
 
-    return (
-        <>
-            <Grid infiniteGrid fadeDistance={50} sectionColor="#4a4a4a" cellColor="#666" />
-            <Environment preset="city" />
-        </>
-    );
+interface SceneErrorBoundaryState {
+    hasError: boolean;
+}
+
+export class SceneErrorBoundary extends Component<SceneErrorBoundaryProps, SceneErrorBoundaryState> {
+    state: SceneErrorBoundaryState = { hasError: false };
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error) {
+        console.error("VRScene failed to render:", error);
+    }
+
+    render() {
+        if (this.state.hasError) return this.props.fallback;
+        return this.props.children;
+    }
 }
