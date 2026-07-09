@@ -124,7 +124,7 @@ export function TeleopControls({ isConnected, isRecording, robotEngaged, session
                 <ul className="list-disc ml-4 space-y-1 mt-1">
                     <li>Click "Enter XR" button above (WebXR).</li>
                     <li>Hold Grip to move arm.</li>
-                    <li>Hold Trigger to close gripper.</li>
+                    <li>Press Trigger to close gripper (stays closed while holding the cable).</li>
                     <li>Press 'X' on Left controller to toggle recording.</li>
                     <li>Press 'A' on Right controller to reset the challenge.</li>
                     <li>Goal: plug the fiber cable into the port.</li>
