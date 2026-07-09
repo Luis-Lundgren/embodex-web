@@ -19,7 +19,7 @@ interface VRSceneProps {
 function SceneCore({ joints }: { joints: number[] }) {
     return (
         <group position={[0, 0.2, -0.4]}>
-            <group position={[-0.2, 0.762, -0.625]}>
+            <group position={[-0.2, 0.762, -0.85]}>
                 <WorkspaceTable />
             </group>
             <DigitalTwin joints={joints} />
