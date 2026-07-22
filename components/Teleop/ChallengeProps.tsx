@@ -37,8 +37,8 @@ const OBJECT_MODELS: Record<string, string> = {
     port_panel: "port_panel.glb",
 };
 
-/** GLB ferrule art faces opposite the sim +Y insertion axis; yaw 180° in object space. */
-const CONNECTOR_MODEL_YAW = Math.PI;
+/** GLB ferrule art faces +Y insertion axis; align white ferrule toward the panel socket hole. */
+const CONNECTOR_MODEL_YAW = 0;
 
 function ObjectModel({ obj }: { obj: ChallengeObject }) {
     const file = OBJECT_MODELS[obj.id];
