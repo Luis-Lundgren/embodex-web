@@ -1,110 +1,106 @@
-# SO-100 Motion Exchange MVP
+# Embodex Web — Motion Exchange & Teleop Studio 🌐🦾
 
-The premium marketplace for high-fidelity SO-100 robot arm trajectories.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![Three.js](https://img.shields.io/badge/Three.js-R3F-black)](https://threejs.org/)
+[![Backend](https://img.shields.io/badge/Embodex_Teleop-Backend-orange)](https://github.com/Luis-Lundgren/embodex-teleop)
 
-## Features
-- **Dataset Browser**: Explore free and premium datasets.
-- **3D Visualization**: Interactive digital twin viewer with playback controls.
-- **Premium Requests**: Submit valid datasets for review or request custom data.
-- **Admin Dashboard**: Review submissions.
+**Embodex Web** is the open-source frontend and platform hub for the **Embodex** ecosystem. It provides an embodied dataset exchange, interactive 3D digital-twin trajectory visualizer, episode review studio, and live WebXR robot teleoperation cockpit.
 
-## Tech Stack
-- **Frontend**: Next.js 14, React, TailwindCSS, Three.js, React Three Fiber.
-- **Database**: SQLite (via Prisma).
-- **Ingestion**: Python script for HuggingFace/LeRobot datasets.
+---
 
-## Setup
+## ✨ Features
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+- **Motion Exchange**: Search, inspect, and download open-source robot manipulation datasets and trajectories.
+- **3D Trajectory Viewer**: Interactive WebGL playback powered by Three.js and React Three Fiber with 6DoF end-effector trails and joint interpolation.
+- **Episode Review Studio**: Filter recorded sessions, inspect success metrics, and annotate robotic episodes.
+- **Live Teleoperation Cockpit**: Real-time WebSocket connection to the [`embodex-teleop`](https://github.com/Luis-Lundgren/embodex-teleop) backend for live robot monitoring and control.
+- **WebXR Ready**: Direct in-browser VR support for Meta Quest and Apple Vision Pro.
 
-2. **Initialize Database**
-   ```bash
-   npx prisma db push
-   ```
-   *Note: If running in a mixed WSL/Windows environment and `npx` fails, try using `node.exe node_modules/prisma/build/index.js db push`*
+---
 
-3. **Assets Setup**
-   The robot assets are symlinked in `public/assets`. If using Windows Node, you may need to copy them physically:
-   ```bash
-   rm public/assets/robots
-   cp -r ./public/assets/robots public/assets/
-   ```
+## 🛠️ Tech Stack
 
-4. **Ingest Data**
-   You can ingest existing LeRobot datasets.
-   ```bash
-   python3 scripts/ingest_dataset.py --source /path/to/dataset
-   ```
+- **Framework**: Next.js 14 (App Router)
+- **3D Graphics**: Three.js, React Three Fiber, Drei
+- **Styling**: Tailwind CSS
+- **Database & ORM**: PostgreSQL with Prisma ORM
+- **Authentication**: NextAuth.js (Google OAuth & Credentials)
+- **Robot Backend Integration**: WebSocket & REST to `embodex-teleop`
 
-5. **Run Development Server**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000).
+---
 
-## Deployment (Docker)
+## 🚀 Quick Start
 
-1. **Build Container**
-   ```bash
-   docker build -t motion-exchange .
-   ```
+### 1. Prerequisites
 
-2. **Run**
-   ```bash
-   docker run -p 3000:3000 -v $(pwd)/datasets:/app/datasets -v $(pwd)/dev.db:/app/dev.db motion-exchange
-   ```
+- Node.js 18+ and npm
+- PostgreSQL database (or Supabase instance)
+- A running [`embodex-teleop`](https://github.com/Luis-Lundgren/embodex-teleop) instance (optional, for live teleoperation)
 
-## Authentication Setup (Google OAuth)
+### 2. Install Dependencies
 
-This project uses Google Authentication. To set it up:
-
-1. **Create Google Cloud Project**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/).
-   - Create a new project.
-   - Navigate to **APIs & Services > Credentials**.
-   - Create **OAuth client ID** (Application type: Web application).
-   - Add **Authorized redirect URIs**:
-     - `https://localhost:3000/api/auth/callback/google`
-
-2. **Configure Environment Variables**
-   - Copy `.env.example` to `.env` (or update existing `.env`).
-   - Fill in the following variables:
-     ```env
-     GOOGLE_CLIENT_ID=your_client_id_here
-     GOOGLE_CLIENT_SECRET=your_client_secret_here
-     NEXTAUTH_SECRET=your_random_secret_here
-     NEXTAUTH_URL=https://localhost:3000
-     ```
-   - To generate a `NEXTAUTH_SECRET`, you can run: `openssl rand -hex 32`
-
-### TeleGrip Backend (Railway)
-If you are connecting to a remote TeleGrip backend (e.g., on Railway):
-```env
-NEXT_PUBLIC_TELEGRIP_WS_URL=wss://your-backend.up.railway.app/ws
-NEXT_PUBLIC_TELEGRIP_HTTP_URL=https://your-backend.up.railway.app
-```
-*Note: The WebSocket URL must include the `/ws` path, and production URLs should not specify a port.*
-
-3. **Database Migration**
-   - Ensure you've run the latest migrations to include auth tables:
-     ```bash
-     npx prisma migrate dev
-     ```
-
-## Development with HTTPS
-
-Google OAuth requires HTTPS even on localhost. Run the dev server with:
 ```bash
-npm run dev -- --experimental-https
+git clone https://github.com/Luis-Lundgren/embodex-web.git
+cd embodex-web
+npm install
 ```
 
-## Project Structure
-- `app/`: Next.js App Router pages and API routes.
-- `components/`: React components (UI + 3D).
-- `datasets/`: Local storage for dataset JSONs and manifest.
-- `lib/`: Shared utilities (Prisma, Auth).
-- `scripts/`: Python utility scripts.
-- `prisma/`: Database schema.
+### 3. Configure Environment Variables
+
+Copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Set your database credentials and backend URLs:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/embodex?schema=public"
+DIRECT_URL="postgresql://user:password@localhost:5432/embodex?schema=public"
+NEXTAUTH_SECRET="generate-with-openssl-rand-hex-32"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Embodex Teleop Backend URL
+NEXT_PUBLIC_TELEGRIP_HTTP_URL="http://localhost:8500"
+NEXT_PUBLIC_TELEGRIP_WS_URL="ws://localhost:8500"
+```
+
+### 4. Push Database Schema
+
+```bash
+npx prisma db push
+```
+
+### 5. Run Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🐳 Docker Deployment
+
+Build and run with Docker:
+
+```bash
+docker build -t embodex-web .
+docker run -p 3000:3000 --env-file .env embodex-web
+```
+
+---
+
+## 🔗 Related Repositories
+
+- **[Embodex Teleop](https://github.com/Luis-Lundgren/embodex-teleop)**: The robot teleoperation engine, digital twin simulator, and episode recorder.
+- **[TeleGrip Submodule](https://github.com/Luis-Lundgren/telegrip)**: Upstream-compatible fork of TeleGrip.
+
+---
+
+## 📜 License & Attribution
+
+Embodex Web is licensed under the [Apache License 2.0](LICENSE).
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details on third-party libraries.
