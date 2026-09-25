@@ -25,9 +25,10 @@ export async function POST() {
         }
 
         const roles: string[] = user.roles || [];
+        const canTeleop = roles.includes('teleoperator') || roles.includes('admin');
 
-        // Role restriction: Labs alone cannot obtain direct physical teleop tickets
-        if (roles.length > 0 && !roles.includes('teleoperator') && !roles.includes('admin')) {
+        // Role restriction: Only teleoperators and admins can obtain teleoperation tickets
+        if (!canTeleop) {
             return NextResponse.json(
                 { error: 'Forbidden: Teleoperation access requires teleoperator or admin role' },
                 { status: 403 }

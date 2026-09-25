@@ -51,13 +51,13 @@ export function createWsTicket(
     }
 
     const roles = user.roles || [];
-    let role = 'teleoperator';
+    let role: 'teleoperator' | 'admin';
     if (roles.includes('admin')) {
         role = 'admin';
     } else if (roles.includes('teleoperator')) {
         role = 'teleoperator';
-    } else if (roles.length > 0) {
-        role = roles[0];
+    } else {
+        throw new Error('User is not authorized for teleoperation: requires teleoperator or admin role');
     }
 
     const now = Math.floor(Date.now() / 1000);

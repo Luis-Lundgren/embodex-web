@@ -131,9 +131,43 @@ describe('Embodex Web Security & Integration Tests', () => {
         assert.ok(json.wsUrl.includes('8500'));
     });
 
+    it('ws-ticket route: admin user -> 200 with ticket and wsUrl', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'admin_user_42', roles: ['admin'] },
+        }));
+
+        const res = await handleWsTicket();
+        assert.equal(res.status, 200);
+        const json = await res.json();
+        assert.ok(json.ticket, 'Should return signed ticket');
+        assert.equal(json.expiresIn, 60);
+    });
+
     it('ws-ticket route: lab-only user -> 403 Forbidden', async () => {
         mock.method(authService, 'getSession', async () => ({
             user: { id: 'user_lab_only', roles: ['lab'] },
+        }));
+
+        const res = await handleWsTicket();
+        assert.equal(res.status, 403);
+        const json = await res.json();
+        assert.ok(json.error.includes('Forbidden'));
+    });
+
+    it('ws-ticket route: user with empty roles -> 403 Forbidden (fail closed)', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'user_empty_roles', roles: [] },
+        }));
+
+        const res = await handleWsTicket();
+        assert.equal(res.status, 403);
+        const json = await res.json();
+        assert.ok(json.error.includes('Forbidden'));
+    });
+
+    it('ws-ticket route: user with unknown role -> 403 Forbidden (fail closed)', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'user_unknown_role', roles: ['guest'] },
         }));
 
         const res = await handleWsTicket();
@@ -167,6 +201,45 @@ describe('Embodex Web Security & Integration Tests', () => {
         });
         const res = await handleControlPost(req, { params: { action: 'robot' } });
         assert.equal(res.status, 403);
+    });
+
+    it('control proxy: empty roles attempting robot control -> 403 (fail closed)', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'empty_roles_user', roles: [] },
+        }));
+
+        const req = new Request('http://localhost:3000/api/teleop/control/robot', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'connect' }),
+        });
+        const res = await handleControlPost(req, { params: { action: 'robot' } });
+        assert.equal(res.status, 403);
+    });
+
+    it('control proxy: unknown role attempting robot control -> 403 (fail closed)', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'unknown_role_user', roles: ['viewer'] },
+        }));
+
+        const req = new Request('http://localhost:3000/api/teleop/control/robot', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'connect' }),
+        });
+        const res = await handleControlPost(req, { params: { action: 'robot' } });
+        assert.equal(res.status, 403);
+    });
+
+    it('control proxy: authorized admin attempting robot control -> 200', async () => {
+        mock.method(authService, 'getSession', async () => ({
+            user: { id: 'admin_user_2', roles: ['admin'] },
+        }));
+
+        const req = new Request('http://localhost:3000/api/teleop/control/robot', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'connect' }),
+        });
+        const res = await handleControlPost(req, { params: { action: 'robot' } });
+        assert.equal(res.status, 200);
     });
 
     it('control proxy: authorized teleoperator -> attaches Bearer token server-side', async () => {

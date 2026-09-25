@@ -28,8 +28,7 @@ function validateRole(action: ActionType, method: string, roles: string[]): { al
 
     // 2. Teleoperator or Admin operations (Hardware/Robot physical control)
     if (['robot', 'keyboard', 'keypress', 'task'].includes(action)) {
-        // If roles are defined, restrict lab-only users from direct physical control
-        if (roles.length > 0 && !isTeleoperator && !isAdmin) {
+        if (!isTeleoperator && !isAdmin) {
             return { allowed: false, reason: `Forbidden: Control action '${action}' requires teleoperator or admin role` };
         }
         return { allowed: true };

@@ -98,6 +98,27 @@ describe('Teleop Service Layer Unit Tests', () => {
         assert.equal(payload.role, 'admin');
     });
 
+    it('createWsTicket throws when roles is empty (fail closed)', () => {
+        assert.throws(
+            () => createWsTicket({ id: 'user_empty', roles: [] }, 60),
+            /User is not authorized for teleoperation/
+        );
+    });
+
+    it('createWsTicket throws when roles is lab-only (fail closed)', () => {
+        assert.throws(
+            () => createWsTicket({ id: 'user_lab', roles: ['lab'] }, 60),
+            /User is not authorized for teleoperation/
+        );
+    });
+
+    it('createWsTicket throws when roles contains unknown role (fail closed)', () => {
+        assert.throws(
+            () => createWsTicket({ id: 'user_unknown', roles: ['viewer'] }, 60),
+            /User is not authorized for teleoperation/
+        );
+    });
+
     it('proxyTeleopRequest attaches Authorization Bearer token server-side', async () => {
         const res = await proxyTeleopRequest('/api/robot', {
             method: 'POST',
