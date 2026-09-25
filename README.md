@@ -61,9 +61,12 @@ DIRECT_URL="postgresql://user:password@localhost:5432/embodex?schema=public"
 NEXTAUTH_SECRET="generate-with-openssl-rand-hex-32"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Embodex Teleop Backend URL
-NEXT_PUBLIC_TELEGRIP_HTTP_URL="http://localhost:8500"
-NEXT_PUBLIC_TELEGRIP_WS_URL="ws://localhost:8500"
+# Embodex Teleop Backend URL (preferred)
+NEXT_PUBLIC_EMBODEX_TELEOP_HTTP_URL="http://localhost:8500"
+NEXT_PUBLIC_EMBODEX_TELEOP_WS_URL="ws://localhost:8500/ws"
+# Fallback (deprecated in v0.2, planned removal in a future release):
+# NEXT_PUBLIC_TELEGRIP_HTTP_URL="http://localhost:8500"
+# NEXT_PUBLIC_TELEGRIP_WS_URL="ws://localhost:8500"
 ```
 
 ### 4. Push Database Schema

@@ -9,9 +9,9 @@ interface TeleopClientProps {
     url?: string;
 }
 
-import { TELEGRIP_WS_URL } from '@/lib/config';
+import { EMBODEX_TELEOP_WS_URL } from '@/lib/config';
 
-export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopped, url = TELEGRIP_WS_URL }: TeleopClientProps) {
+export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopped, url = EMBODEX_TELEOP_WS_URL }: TeleopClientProps) {
     const ws = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessageTime, setLastMessageTime] = useState(0);

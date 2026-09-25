@@ -3,20 +3,33 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-function getTelegripBaseUrl(): string | null {
-    const url = process.env.TELEGRIP_HTTP_URL || process.env.NEXT_PUBLIC_TELEGRIP_HTTP_URL;
+function getTeleopBaseUrl(): string | null {
+    // Preferred modern variables
+    const url = process.env.EMBODEX_TELEOP_HTTP_URL ||
+                process.env.NEXT_PUBLIC_EMBODEX_TELEOP_HTTP_URL ||
+                // Deprecated fallbacks (planned removal in a future release)
+                process.env.TELEGRIP_HTTP_URL ||
+                process.env.NEXT_PUBLIC_TELEGRIP_HTTP_URL;
     return url ? url.replace(/\/$/, '') : null;
 }
 
-async function fetchFromTelegrip(path: string) {
-    const base = getTelegripBaseUrl();
+async function fetchFromTeleop(path: string) {
+    const base = getTeleopBaseUrl();
     if (!base) return null;
     try {
-        const res = await fetch(`${base}${path}`, { cache: 'no-store' });
+        const token = process.env.EMBODEX_API_TOKEN;
+        const headers: Record<string, string> = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch(`${base}${path}`, {
+            cache: 'no-store',
+            headers,
+        });
         if (!res.ok) return null;
         return res.json();
     } catch (e) {
-        console.error(`Failed to fetch from telegrip ${path}:`, e);
+        console.error(`Failed to fetch from teleop service ${path}:`, e);
         return null;
     }
 }
@@ -27,13 +40,13 @@ export async function GET(request: Request) {
         const sessionId = searchParams.get('sessionId');
 
         if (sessionId) {
-            // Prefer live session data from telegrip backend (filesystem)
-            const telegripData = await fetchFromTelegrip(`/api/sessions/${sessionId}`);
-            if (telegripData) {
-                return NextResponse.json(telegripData);
+            // Prefer live session data from teleop backend (filesystem)
+            const teleopData = await fetchFromTeleop(`/api/sessions/${sessionId}`);
+            if (teleopData) {
+                return NextResponse.json(teleopData);
             }
 
-            // Fallback to embodex DB
+            // Fallback to canonical marketplace DB
             const dataset = await prisma.dataset.findFirst({
                 where: { sourceId: sessionId },
                 include: { episodes: true }
@@ -52,10 +65,10 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'No playable data found in session' }, { status: 404 });
         }
 
-        // List sessions: telegrip first, merge with DB entries
-        const telegripSessions = await fetchFromTelegrip('/api/sessions');
-        if (Array.isArray(telegripSessions) && telegripSessions.length > 0) {
-            return NextResponse.json(telegripSessions);
+        // List sessions: teleop first, merge with DB entries
+        const teleopSessions = await fetchFromTeleop('/api/sessions');
+        if (Array.isArray(teleopSessions) && teleopSessions.length > 0) {
+            return NextResponse.json(teleopSessions);
         }
 
         const datasets = await prisma.dataset.findMany({

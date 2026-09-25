@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useTeleopClient } from "@/components/Teleop/TeleopClient";
 import { TeleopControls } from "@/components/Teleop/Controls";
 import SessionReview from "@/components/Teleop/SessionReview";
-import { TELEGRIP_WS_URL, TELEGRIP_HTTP_URL } from "@/lib/config";
+import { EMBODEX_TELEOP_WS_URL, EMBODEX_TELEOP_HTTP_URL } from "@/lib/config";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -49,7 +49,7 @@ export default function TeleopContent() {
     }, [authStatus, router]);
 
     const getApiUrl = useCallback((path: string) => {
-        return `${TELEGRIP_HTTP_URL.replace(/\/$/, "")}${path}`;
+        return `${EMBODEX_TELEOP_HTTP_URL.replace(/\/$/, "")}${path}`;
     }, []);
 
     const handleRobotState = useCallback((state: any) => {
@@ -102,7 +102,7 @@ export default function TeleopContent() {
         wasRecording.current = status.recording;
     }, [status.recording, getApiUrl]);
 
-    const getWsUrl = useCallback(() => TELEGRIP_WS_URL, []);
+    const getWsUrl = useCallback(() => EMBODEX_TELEOP_WS_URL, []);
 
     const fetchStatus = useCallback(async () => {
         try {
