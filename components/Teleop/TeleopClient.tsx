@@ -16,28 +16,54 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessageTime, setLastMessageTime] = useState(0);
 
-    const connect = useCallback(() => {
-        if (ws.current?.readyState === WebSocket.OPEN) return;
+    const connect = useCallback(async () => {
+        if (ws.current?.readyState === WebSocket.OPEN || ws.current?.readyState === WebSocket.CONNECTING) return;
 
-        let targetUrl = url;
-        if (targetUrl.includes("localhost") || targetUrl.includes("127.0.0.1")) {
-            const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-            targetUrl = targetUrl.replace("localhost", host).replace("127.0.0.1", host);
-        }
-
-        console.log(`Connecting to TeleGrip backend at ${targetUrl}...`);
+        // 1. Request short-lived ticket from Next.js server route
+        let ticket: string | null = null;
+        let targetWsUrl = url;
 
         try {
-            ws.current = new WebSocket(targetUrl);
+            const ticketRes = await fetch('/api/teleop/ws-ticket', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (ticketRes.ok) {
+                const ticketData = await ticketRes.json();
+                if (ticketData.ticket) {
+                    ticket = ticketData.ticket;
+                }
+                if (ticketData.wsUrl) {
+                    targetWsUrl = ticketData.wsUrl;
+                }
+            } else {
+                console.warn(`[TeleopClient] Ticket request returned status ${ticketRes.status}`);
+            }
+        } catch (e) {
+            console.error('[TeleopClient] Failed to fetch WebSocket ticket:', e);
+        }
+
+        if (targetWsUrl.includes("localhost") || targetWsUrl.includes("127.0.0.1")) {
+            const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+            targetWsUrl = targetWsUrl.replace("localhost", host).replace("127.0.0.1", host);
+        }
+
+        console.log(`Connecting to Embodex teleop backend at ${targetWsUrl}...`);
+
+        try {
+            // 2. Connect using subprotocol authentication: embodex-ticket.<ticket>
+            const protocols = ticket ? [`embodex-ticket.${ticket}`] : undefined;
+            ws.current = protocols ? new WebSocket(targetWsUrl, protocols) : new WebSocket(targetWsUrl);
 
             ws.current.onopen = () => {
-                console.log("Connected to TeleGrip backend");
+                console.log("Connected to Embodex teleop backend");
                 setIsConnected(true);
                 onStatusChange(true);
             };
 
-            ws.current.onclose = () => {
-                console.log("Disconnected from TeleGrip backend");
+            ws.current.onclose = (event) => {
+                console.log(`Disconnected from Embodex teleop backend (code: ${event.code})`);
                 setIsConnected(false);
                 onStatusChange(false);
                 ws.current = null;
@@ -45,7 +71,6 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
 
             ws.current.onerror = (err) => {
                 console.error("WebSocket error:", err);
-                // Dont set connected false here, onclose will handle it
             };
 
             ws.current.onmessage = (event) => {
@@ -69,6 +94,7 @@ export function useTeleopClient({ onRobotState, onStatusChange, onRecordingStopp
     const disconnect = useCallback(() => {
         if (ws.current) {
             ws.current.close();
+            ws.current = null;
         }
     }, []);
 

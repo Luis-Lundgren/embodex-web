@@ -1,38 +1,9 @@
 import { NextResponse } from 'next/server';
+import { authService } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { proxyTeleopRequest } from '@/lib/teleop-service';
 
 export const dynamic = 'force-dynamic';
-
-function getTeleopBaseUrl(): string | null {
-    // Preferred modern variables
-    const url = process.env.EMBODEX_TELEOP_HTTP_URL ||
-                process.env.NEXT_PUBLIC_EMBODEX_TELEOP_HTTP_URL ||
-                // Deprecated fallbacks (planned removal in a future release)
-                process.env.TELEGRIP_HTTP_URL ||
-                process.env.NEXT_PUBLIC_TELEGRIP_HTTP_URL;
-    return url ? url.replace(/\/$/, '') : null;
-}
-
-async function fetchFromTeleop(path: string) {
-    const base = getTeleopBaseUrl();
-    if (!base) return null;
-    try {
-        const token = process.env.EMBODEX_API_TOKEN;
-        const headers: Record<string, string> = {};
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-        const res = await fetch(`${base}${path}`, {
-            cache: 'no-store',
-            headers,
-        });
-        if (!res.ok) return null;
-        return res.json();
-    } catch (e) {
-        console.error(`Failed to fetch from teleop service ${path}:`, e);
-        return null;
-    }
-}
 
 export async function GET(request: Request) {
     try {
@@ -40,16 +11,35 @@ export async function GET(request: Request) {
         const sessionId = searchParams.get('sessionId');
 
         if (sessionId) {
-            // Prefer live session data from teleop backend (filesystem)
-            const teleopData = await fetchFromTeleop(`/api/sessions/${sessionId}`);
-            if (teleopData) {
+            // PRIORITY 2: Require authenticated NextAuth user to prevent unauthorized trajectory retrieval
+            const session = await authService.getSession();
+            if (!session?.user) {
+                return NextResponse.json(
+                    { error: 'Unauthorized: Authentication required to retrieve session trajectory data' },
+                    { status: 401 }
+                );
+            }
+
+            // Authorization check
+            const user = session.user as { id?: string; roles?: string[] };
+            const roles = user.roles || [];
+
+            // TODO: Enforce fine-grained ownership linkage when data model links sessions to jobs:
+            // - Teleoperator may access sessions they recorded / own
+            // - Lab may access sessions belonging to a job they funded / requested
+            // - Admin may access all sessions
+            // Currently, any authenticated user with an established account is permitted.
+
+            // 1. Fetch live session data from teleop backend (filesystem) via server-side proxy
+            const { status, data: teleopData } = await proxyTeleopRequest(`/api/sessions/${sessionId}`);
+            if (status === 200 && teleopData) {
                 return NextResponse.json(teleopData);
             }
 
-            // Fallback to canonical marketplace DB
+            // 2. Fallback to canonical marketplace DB
             const dataset = await prisma.dataset.findFirst({
                 where: { sourceId: sessionId },
-                include: { episodes: true }
+                include: { episodes: true },
             });
 
             if (dataset && dataset.episodes.length > 0 && dataset.episodes[0].data) {
@@ -57,7 +47,7 @@ export async function GET(request: Request) {
                 const responseData = {
                     ...(episode.data as object),
                     datasetId: dataset.id,
-                    episodeId: episode.id
+                    episodeId: episode.id,
                 };
                 return NextResponse.json(responseData);
             }
@@ -65,9 +55,9 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'No playable data found in session' }, { status: 404 });
         }
 
-        // List sessions: teleop first, merge with DB entries
-        const teleopSessions = await fetchFromTeleop('/api/sessions');
-        if (Array.isArray(teleopSessions) && teleopSessions.length > 0) {
+        // List sessions: teleop first (metadata summary only, sanitized of local paths), merge with DB entries
+        const { status, data: teleopSessions } = await proxyTeleopRequest('/api/sessions');
+        if (status === 200 && Array.isArray(teleopSessions) && teleopSessions.length > 0) {
             return NextResponse.json(teleopSessions);
         }
 
@@ -75,19 +65,20 @@ export async function GET(request: Request) {
             orderBy: { createdAt: 'desc' },
             select: {
                 sourceId: true,
-                createdAt: true
-            }
+                createdAt: true,
+            },
         });
 
         const sessions = datasets.map((d: any) => ({
             id: d.sourceId,
-            createdAt: d.createdAt
+            createdAt: d.createdAt,
+            recording: false,
         }));
 
         return NextResponse.json(sessions);
 
     } catch (error) {
-        console.error("Error fetching sessions:", error);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        console.error('[teleop/sessions] Error fetching sessions:', error);
+        return NextResponse.json({ error: 'Failed to retrieve sessions' }, { status: 500 });
     }
 }

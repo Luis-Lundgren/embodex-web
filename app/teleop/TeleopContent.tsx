@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useTeleopClient } from "@/components/Teleop/TeleopClient";
 import { TeleopControls } from "@/components/Teleop/Controls";
 import SessionReview from "@/components/Teleop/SessionReview";
-import { EMBODEX_TELEOP_WS_URL, EMBODEX_TELEOP_HTTP_URL } from "@/lib/config";
+import { EMBODEX_TELEOP_WS_URL } from "@/lib/config";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -48,10 +48,6 @@ export default function TeleopContent() {
         }
     }, [authStatus, router]);
 
-    const getApiUrl = useCallback((path: string) => {
-        return `${EMBODEX_TELEOP_HTTP_URL.replace(/\/$/, "")}${path}`;
-    }, []);
-
     const handleRobotState = useCallback((state: any) => {
         setRobotState(state);
         if (state) {
@@ -84,7 +80,7 @@ export default function TeleopContent() {
                 for (let attempt = 0; attempt < 5; attempt++) {
                     await new Promise((r) => setTimeout(r, 1000));
                     try {
-                        const res = await fetch(getApiUrl("/api/sessions"));
+                        const res = await fetch("/api/teleop/sessions");
                         if (!res.ok) continue;
                         const sessions = await res.json();
                         if (Array.isArray(sessions) && sessions.length > 0) {
@@ -100,13 +96,13 @@ export default function TeleopContent() {
             detectSession();
         }
         wasRecording.current = status.recording;
-    }, [status.recording, getApiUrl]);
+    }, [status.recording]);
 
     const getWsUrl = useCallback(() => EMBODEX_TELEOP_WS_URL, []);
 
     const fetchStatus = useCallback(async () => {
         try {
-            const res = await fetch(getApiUrl("/api/status"));
+            const res = await fetch("/api/teleop/control/status");
             const data = await res.json();
             if (data) {
                 setStatus((prev) => ({
@@ -117,11 +113,11 @@ export default function TeleopContent() {
         } catch (e) {
             console.error("Failed to fetch status:", e);
         }
-    }, [getApiUrl]);
+    }, []);
 
     const connectRobot = useCallback(() => {
         const action = status.robotEngaged ? "disconnect" : "connect";
-        fetch(getApiUrl("/api/robot"), {
+        fetch("/api/teleop/control/robot", {
             method: "POST",
             body: JSON.stringify({ action }),
             headers: { "Content-Type": "application/json" },
@@ -133,7 +129,7 @@ export default function TeleopContent() {
                 }
             })
             .catch((err) => console.error("Robot connect error:", err));
-    }, [status.robotEngaged, getApiUrl]);
+    }, [status.robotEngaged]);
 
     const handleStatusChange = useCallback(
         (connected: boolean) => {
